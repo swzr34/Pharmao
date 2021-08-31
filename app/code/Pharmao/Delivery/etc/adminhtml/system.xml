@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="pharmao" translate="label" sortOrder="999999">
+            <label>Pharmao</label>
+        </tab>
+        <section id="delivery_configuration" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Delivery Configuration</label>
+            <tab>pharmao</tab>
+            <resource>Pharmao_Delivery::configuration</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pharmao Delivery API</label>
+                <field id="username" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your API Username</label>
+                    <comment>Your Pharmao delivery API username.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="api_key" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your API Secret</label>
+                    <comment>Your Pharmao delivery API secret.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="password" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your API Password</label>
+                    <comment>Your Pharmao delivery API password.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="button_id" translate="label comment" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Pharmao\Delivery\Block\System\Config\Button</frontend_model>
+                </field>
+                <field id="access_token" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Access Token</label>
+                    <frontend_model>Pharmao\Delivery\Block\System\Config\Form\Field\Disable</frontend_model>
+                </field>
+                <field id="field_hide" translate="label" type="hidden" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Acceess Token Hidden</label>
+                </field>
+                <field id="pharmao_delivery_active_status" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Choose which status to create job!</label>
+                    <validate>required-entry</validate>
+                    <source_model>Pharmao\Delivery\Model\Config\Source\Status</source_model>
+                </field>
+                <field id="pharmao_delivery_within_one_hour" translate="label" type="checkbox" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Is within one hour?</label>
+                </field>
+                <field id="environment" translate="label" type="radios" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Environment</label>
+                    <source_model>Pharmao\Delivery\Model\Config\Source\Environment</source_model>
+                </field>
+                <field id="distance_range" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Distance Range (km)</label>
+                    <validate>required-entry validate-number</validate>
+                    <source_model>Pharmao\Delivery\Model\Config\Source\Kilometers</source_model>
+                </field>				
+            </group>
+            <group id="global_settings" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Global Settings</label>
+                <field id="address" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address</label>
+                    <comment>Please indicate where Pharmao Delivery will pick up packages, for ex : 02 Rue des ternes.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="city" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup city</label>
+                    <comment>Please indicate where Pharmao Delivery will pick up packages, for ex : Paris.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="postcode" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup postcode</label>
+                    <comment>Please indicate where Pharmao Delivery will pick up packages, for ex : 75010.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="company_name" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address company name</label>
+                    <comment>eg. My company</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="email" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address email contact</label>
+                    <comment>eg. john-doe@email.fr</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="lastname" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address lastname contact</label>
+                    <comment>eg. Doe</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="firstname" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address firstname contact</label>
+                    <comment>eg. John</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="phone" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your pickup address phone contact</label>
+                    <comment>eg. 0123456789</comment>
+                    <validate>required-entry</validate>
+                </field>
+            </group>
+        </section>
+        <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="dropoffs" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pharmao Dropoffs Shipping Method</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="handling_type" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Calculate Handling Fee</label>
+                    <source_model>Magento\Shipping\Model\Source\HandlingType</source_model>
+                </field>
+                <field id="handling_fee" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Handling Fee</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="sallowspecific" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="91" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Ship to Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="92" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" translate="label" type="textarea" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

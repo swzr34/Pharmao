@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Pharmao_Delivery::menu" title="Pharmao" module="Pharmao_Delivery" sortOrder="70" resource="Pharmao_Delivery::delivery" />
+        <add id="Pharmao_Delivery::configuration" title="Delivery Configuration" module="Pharmao_Delivery" sortOrder="100" action="admin/system_config/edit/section/delivery_configuration" resource="Pharmao_Delivery::configuration" parent="Pharmao_Delivery::menu" />
+    </menu>
+</config>

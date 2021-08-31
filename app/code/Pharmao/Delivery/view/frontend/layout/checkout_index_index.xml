@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Pharmao_Delivery::css/custom.css" />
+    </head>
+    <body>
+        <referenceContainer name="content">
+			<block class="Magento\Framework\View\Element\Template" name="checkouts" template="Pharmao_Delivery::checkout.phtml"></block>
+		</referenceContainer>
+        <referenceBlock name="checkout.root">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="shippingAddress" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="before-form" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="custom-checkout-form-container" xsi:type="array">
+                                                                    <!-- Add this item to configure your js file  -->
+                                                                    <item name="component" xsi:type="string">Pharmao_Delivery/js/view/custom-checkout-form</item>
+                                                                    <item name="config" xsi:type="array">
+                                                                        <!-- And this to add your html template  -->
+                                                                        <item name="template" xsi:type="string">Pharmao_Delivery/custom-checkout-form</item>
+                                                                    </item>
+                                                                    <item name="children" xsi:type="array">
+                                                                        <!-- Here we will add the form fields  -->
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,33 @@
+{
+  "name": "pharmao/delivery-magento2",
+  "description": "Magento 2 Delivery Process",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+  "authors": [
+    {
+      "name": "Pharmao",
+      "email": "perfection24x7@gmail.com",
+      "homepage": "http://www.perfectioninfo.com/"
+    }
+  ],
+  "repositories": [
+        {
+            "type": "composer",
+            "url": ""  
+        }
+    ],
+  "require": {
+  },
+  "autoload": {
+    "files": [
+        "registration.php"
+    ],
+    "psr-4": {
+        "Pharmao\\Delivery\\": ""
+    }
+  }
+}

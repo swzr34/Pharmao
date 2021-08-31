@@ -1,0 +1,6 @@
+.admin__menu #menu-pharmao-delivery-menu > a:before {
+    content: url('../images/admin_icon.png');
+    height: 28px;
+    margin: 0 auto;
+    width: 30px;
+}
