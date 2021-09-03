@@ -73,6 +73,30 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface{
                             ->setOption('charset','utf8');
             $conn->createTable($table);
         }
+        $tableJobName = $setup->getTable('pharmao_job');
+        if($conn->isTableExists($tableJobName) != true){
+            $table_job = $conn->newTable($tableJobName)
+                            ->addColumn(
+                                'id',
+                                Table::TYPE_INTEGER,
+                                null,
+                                ['identity'=>true,'unsigned'=>true,'nullable'=>false,'primary'=>true]
+                                )
+                            ->addColumn(
+                                'order_id',
+                                Table::TYPE_INTEGER,
+                                11,
+                                ['nullable'=>false]
+                                )
+                            ->addColumn(
+                                'job_id',
+                                Table::TYPE_INTEGER,
+                                '11',
+                                ['nullbale'=>false]
+                                )
+                            ->setOption('charset','utf8');
+            $conn->createTable($table_job);
+        }
         $setup->endSetup();
     }
 }
