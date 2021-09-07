@@ -3,34 +3,39 @@
 namespace Pharmao\Delivery\Model\Api;
 
 use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Order;
+use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Webhook
 {
     protected $logger;
 
     public function __construct(
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Order $order,
+        Curl $curl,
+        ScopeConfigInterface $scopeConfig
     )
     {
 
         $this->logger = $logger;
+        $this->order = $order;
+        $this->_curl = $curl;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
     * @inheritdoc
     */
 
-    public function getPost($job_id, $status, $order_reference_number)
+    public function getPost($data)
     {
-    $response = ['success' => false];
-
-        try {
-            $response = ['success' => true, 'data' => ['job_id' => $job_id, 'status' => $status, 'order_reference_number' => $order_reference_number]];
-        } catch (\Exception $e) {
-            $response = ['success' => false, 'message' => $e->getMessage()];
-            $this->logger->info($e->getMessage());
-        }
-        $returnArray = json_encode($response);
+        $returnArray = json_encode($data);
+         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/changed-status.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info('res : ' . $returnArray);
         return $returnArray;
     }
 }
