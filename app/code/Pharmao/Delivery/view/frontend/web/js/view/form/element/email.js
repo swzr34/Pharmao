@@ -122,10 +122,18 @@ console.log('checking')
                       success: function( data ) {
                             var data = JSON.parse(data.data);
                             let text = "";
+                            var street3 = '';
                             $('#selectAddress').children('option').remove();
                             text += "<option value=''>---Select Address---</option>";
                             for (let i = 0; i < data.length; i++) {
-                              text += "<option value='" + data[i].street1 + "," + data[i].street2 + "," + data[i].street3 + "," + data[i].postcode + "," + data[i].city + "," + "France" + "'>" + data[i].street1 +" "+ data[i].street2 + " "+ data[i].street3 + ", " + data[i].postcode + " " + data[i].city + ", " + "France" + "</option>";
+                                if(data[i].street3 != null) {
+                                    street3 = data[i].street3;
+                                    console.log('The variable is undefined or null');
+                                } else {
+                                    console.log('The variable is not undefined or null');
+                                    street3 = '';
+                                }
+                              text += "<option value='" + data[i].street1 + "," + data[i].street2 + "," + data[i].street3 + "," + data[i].postcode + "," + data[i].city + "," + "France" + "'>" + data[i].street1 +" "+ data[i].street2 + " "+ street3 + ", " + data[i].postcode + " " + data[i].city + ", " + "France" + "</option>";
                             }
                             text += "<option value='new'>Add New Address</option>";
                             $('#selectAddress').append( text );

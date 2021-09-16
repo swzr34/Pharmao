@@ -6,4 +6,7 @@ div[name="shippingAddress.firstname"], div[name="shippingAddress.lastname"], div
 .modal-inner-wrap div[name="shippingAddress.firstname"], .modal-inner-wrap div[name="shippingAddress.lastname"], .modal-inner-wrap div[name="shippingAddress.telephone"], .modal-inner-wrap div[name="shippingAddress.company"], .modal-inner-wrap div[name="shippingAddress.country_id"], .modal-inner-wrap div[name="shippingAddress.custom_attributes.address_finder"], .modal-inner-wrap div[name="shippingAddress.city"], .modal-inner-wrap div[name="shippingAddress.postcode"] {
     display: block;
 }
+.checkout-payment-method .payment-method-content {
+    display: block;
+}
 

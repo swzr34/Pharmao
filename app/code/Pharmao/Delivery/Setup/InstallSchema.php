@@ -94,6 +94,23 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface{
                                 '11',
                                 ['nullbale'=>false]
                                 )
+                            ->addColumn(
+                                'status',
+                                Table::TYPE_TEXT,
+                                '255',
+                                ['nullbale'=>false]
+                                )
+                            ->addColumn(
+                                'address',
+                                Table::TYPE_TEXT,
+                                '255',
+                                ['nullbale'=>false,'default'=>'']
+                                )
+                            ->addColumn(
+                                'added',
+                                Table::TYPE_TIMESTAMP,
+                                ['nullbale'=>false,'default'=>'']
+                                )
                             ->setOption('charset','utf8');
             $conn->createTable($table_job);
         }

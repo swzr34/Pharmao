@@ -1,4 +1,20 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Pharmao\Delivery\Api\WebhookInterface" type="Pharmao\Delivery\Model\Api\Webhook"/>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="delivery_job_listing_data_source" xsi:type="string">Pharmao\Delivery\Model\ResourceModel\Job\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Pharmao\Delivery\Model\ResourceModel\Job\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">pharmao_job</argument>
+            <argument name="resourceModel" xsi:type="string">Pharmao\Delivery\Model\ResourceModel\Job</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Sales\Api\OrderManagementInterface">
+        <plugin name="OrderChangePlaceOrders" type="Pharmao\Delivery\Observer\OrderChangePlaceOrder" sortOrder="99" />
+    </type>
 </config>

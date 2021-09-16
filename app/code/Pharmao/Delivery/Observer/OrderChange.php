@@ -46,7 +46,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         'job' =>
         array(
           'assignment_code' => $assignment_code,
-          'external_order_reference' => $order->getIncrementId(),
+          'external_order_reference' => $order->getEntityId(),
           'transport_type' => 'Bike',
           'package_type' => 'small',
           'package_description' => '',
@@ -93,24 +93,27 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
 
       if ($response) {
         $data = json_decode($response);
-        $logger->info('response : ' . $data->data->is_valid);
       } else {
         $data = '';
       }
 
       if (isset($data->data->is_valid) && $data->data->is_valid == true) {
-          $model = $this->_jobFactory->create();
-           $creat_job_url = 'https://delivery-sandbox.pharmao.fr/v1/jobs';
-          $this->_curl->setHeaders($headers);
-          $this->_curl->post($creat_job_url, $data_json);
-          $job_response = $this->_curl->getBody();
-          $job_response_decode = json_decode($job_response, true);
+        $logger->info('response : ' . $data->data->is_valid);
+        $model = $this->_jobFactory->create();
+        $creat_job_url = 'https://delivery-sandbox.pharmao.fr/v1/jobs';
+        $this->_curl->setHeaders($headers);
+        $this->_curl->post($creat_job_url, $data_json);
+        $job_response = $this->_curl->getBody();
+        $job_response_decode = json_decode($job_response, true);
           $model->addData([
-        	"order_id" => $order->getIncrementId(),
-        	"job_id" => $job_response_decode['data']['job_id']
+        	"order_id" => $order->getEntityId(),
+        	"job_id" => $job_response_decode['data']['job_id'],
+        	"status" => $job_response_decode['data']['status'],
+        	"address" => $full_address,
+        	"added" => date("Y-m-d H:i:s")
         	]);
             $saveData = $model->save();
-        	$logger->info('final : ');
+        	$logger->info('final : ' .print_r($job_response_decode, true));
       }
     }
   }

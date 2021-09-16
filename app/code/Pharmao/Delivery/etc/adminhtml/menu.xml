@@ -3,5 +3,6 @@
     <menu>
         <add id="Pharmao_Delivery::menu" title="Pharmao" module="Pharmao_Delivery" sortOrder="70" resource="Pharmao_Delivery::delivery" />
         <add id="Pharmao_Delivery::configuration" title="Delivery Configuration" module="Pharmao_Delivery" sortOrder="100" action="admin/system_config/edit/section/delivery_configuration" resource="Pharmao_Delivery::configuration" parent="Pharmao_Delivery::menu" />
+        <add id="Pharmao_Delivery::job" title="Pharmao Delivery Job" module="Pharmao_Delivery" sortOrder="110" action="delivery/job/index" resource="Pharmao_Delivery::job" parent="Pharmao_Delivery::menu" />
     </menu>
 </config>

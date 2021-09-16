@@ -45,9 +45,11 @@ class AfterPlaceOrder implements ObserverInterface
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/after-order.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
-        
+        $logger->info('result : ' . $street1);
+        $logger->info('result : ' . $street2);
+        $logger->info('result : ' . $street3);
         $model = $this->_addressFactory->create();
-        $collection = $model->getCollection()->addFieldToFilter('email', trim($email))->addFieldToFilter('street1', trim($street1))->addFieldToFilter('street2', trim($street2))->addFieldToFilter('street3', trim($street3))->addFieldToFilter('city', trim($city))->addFieldToFilter('postCode', trim($postCode))->addFieldToFilter('country', trim($country));
+        $collection = $model->getCollection()->addFieldToFilter('email', trim($email))->addFieldToFilter('street1', trim($street1))->addFieldToFilter('street2', trim($street2))->addFieldToFilter('city', trim($city))->addFieldToFilter('postCode', trim($postCode))->addFieldToFilter('country', trim($country));
         $logger->info('result : ' . print_r($collection->getData(), true));
         
         if (empty($collection->getData())) {

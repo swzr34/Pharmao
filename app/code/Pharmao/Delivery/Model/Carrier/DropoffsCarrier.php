@@ -94,7 +94,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
         $fullAddress = $address . ", " . $postCode . " " . $city . ", " . "France";
-        
+        $limitationOfKms = $this->scopeConfig->getValue('delivery_configuration/general/distance_range', $storeScope);
         $items = $this->_cart->getQuote()->getAllItems();
         $sub_total = $this->_cart->getQuote()->getSubtotal();
         $total = $this->_cart->getQuote()->getGrandTotal();
@@ -150,7 +150,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
 
         /*store shipping in session*/
         if (isset($data->data->amount)) {
-            if (isset($data->data->distance) && $data->data->distance < 10 && $weight < $weight_unit) {
+            if (isset($data->data->distance) && $data->data->distance < $limitationOfKms && $weight < $weight_unit) {
 
                 /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
                 $method = $this->_rateMethodFactory->create();
