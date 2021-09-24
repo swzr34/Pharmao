@@ -35,15 +35,6 @@ class Webhook
 
     public function getPost($data)
     {
-        // $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/changed-status.log');
-        // $logger = new \Zend\Log\Logger();
-        // $logger->addWriter($writer);
-        // $returnArray = json_encode($data);
-        // $logger->info('res : ' . $returnArray);
-        // $logger->info('job_id : ' . $data['id']);
-        // $logger->info('status : ' . $data['status']);
-        // $logger->info('status : ' .  date("Y-m-d H:i:s"));
-        // die;
 
         $model = $this->_jobFactory->create();
         $collection = $model->getCollection()->addFieldToFilter('job_id', trim($data['id']));
@@ -67,6 +58,6 @@ class Webhook
             $logger->info('status : ' . $data['status']);
             $logger->info('status : ' .  date("Y-m-d H:i:s"));
         }
-        return $returnArray;
+        return true;
     }
 }

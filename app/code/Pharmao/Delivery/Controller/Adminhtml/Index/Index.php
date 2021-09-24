@@ -21,6 +21,7 @@ class Index extends \Magento\Backend\App\Action
     * @param Context $context
     * @param PageFactory $pageFactory
     */
+    
     public function __construct(Context $context, PageFactory $pageFactory, \Magento\Framework\HTTP\Client\Curl $curl, \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory)
     {
         $this->resultPageFactory = $pageFactory;

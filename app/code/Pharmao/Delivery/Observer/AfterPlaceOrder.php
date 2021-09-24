@@ -11,15 +11,13 @@ class AfterPlaceOrder implements ObserverInterface
           \Magento\Framework\View\Element\Template\Context $context,
           \Pharmao\Delivery\Model\AddressFactory $addressFactory,  array $data = []
           )
-     {
-          $this->_addressFactory = $addressFactory;
-     }
+    {
+      $this->_addressFactory = $addressFactory;
+    }
      
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        // ini_set('display_errors', -1);
        	$order = $observer->getEvent()->getOrder();
-        // $guestCustomer = $order->getCustomerIsGuest();
         $shippingAddress = $order->getShippingAddress();
         $customerAddressId = 0;
         $customerId = 0;

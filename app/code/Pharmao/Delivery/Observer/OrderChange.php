@@ -39,9 +39,9 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
     $logger->addWriter($writer);
 
     $logger->info('status : ' . $config_status);
-    $logger->info('status : ' . $order->getState());
+    $logger->info('statu456s : ' . $order->getStatus());
 
-    if ($order->getState() == $config_status) {
+    if ($order->getStatus() == $config_status) {
       $data = array(
         'job' =>
         array(

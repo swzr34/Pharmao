@@ -5,10 +5,9 @@ require([
 ], function(jQuery){
     function callAjax() {
         var delivery_configuration_general_environment = jQuery('#delivery_configuration_general_environment').find(":selected").val();
-        
-            var delivery_configuration_general_username = jQuery('#delivery_configuration_general_username').val();
-            var delivery_configuration_general_api_key = jQuery('#delivery_configuration_general_api_key').val();
-            var delivery_configuration_general_password = jQuery('#delivery_configuration_general_password').val();
+        var delivery_configuration_general_username = jQuery('#delivery_configuration_general_username').val();
+        var delivery_configuration_general_api_key = jQuery('#delivery_configuration_general_api_key').val();
+        var delivery_configuration_general_password = jQuery('#delivery_configuration_general_password').val();
         jQuery('body').trigger('processStart');
         jQuery.ajax({
           url: "<?php echo $block->getControllerUrl() ?>",
@@ -47,11 +46,10 @@ require([
         callAjax();
     });
     
-    //jQuery('.submit_config').click(function () {
-        // alert('clicked');
-        jQuery('#row_delivery_configuration_general_field_hide').css('display','none');
-        jQuery('#delivery_configuration_general_access_token').val(jQuery('#delivery_configuration_general_field_hide').val());
-    //});
+    
+    jQuery('#row_delivery_configuration_general_field_hide').css('display','none');
+    jQuery('#delivery_configuration_general_access_token').val(jQuery('#delivery_configuration_general_field_hide').val());
+
 });
 </script>
 <?php

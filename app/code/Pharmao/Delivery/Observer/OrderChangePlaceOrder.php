@@ -44,9 +44,9 @@ class OrderChangePlaceOrder {
         $logger->addWriter($writer);
     
         $logger->info('status : ' . $config_status);
-        $logger->info('status : ' . $order->getState());
+        $logger->info('status123 : ' . $order->getStatus());
     
-        if ($order->getState() == $config_status) {
+        if ($order->getStatus() == $config_status) {
           $data = array(
             'job' =>
             array(
@@ -121,8 +121,6 @@ class OrderChangePlaceOrder {
             	$logger->info('final : ' .print_r($job_response_decode, true));
           }
         }
-
-        // do something with order object (Interceptor )
 
        return $order;
     }
