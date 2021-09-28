@@ -2,7 +2,7 @@
 
 namespace Pharmao\Delivery\Helper;
 
-use Pharmao\Delivery\Service\JobService;
+use \Pharmao\Delivery\Service\JobService;
 use \Magento\Framework\App\Helper\AbstractHelper;
 
 class Data extends AbstractHelper
