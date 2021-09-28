@@ -1,8 +1,8 @@
 <?php
 
-namespace Pharmao\Delivery\Service;
+namespace Pharmao\Delivery\Helper\Service;
 
-use \Pharmao\Delivery\Service\AbstractService;
+use \Pharmao\Delivery\Helper\Service\AbstractService;
 
 class JobService extends AbstractService
 {
@@ -54,5 +54,19 @@ class JobService extends AbstractService
 
 
         return false;
+    }
+
+    /**
+     * Get Price
+     * @param  array $data
+     * @return mixed
+     */
+    public function getPrice($data)
+    {
+        $params = $this->buildJobData($data);
+
+        $body = $this->post('/job/price', $params);
+
+        return $body;
     }
 }
