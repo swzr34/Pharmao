@@ -1,6 +1,6 @@
 <?php
 
-namespace Pharmao\Delivery\Helper\Service;
+namespace Pharmao\Delivery\Service;
 
 use \Pharmao\Delivery\Model\Delivery;
 use \Magento\Framework\HTTP\Client\Curl;
@@ -210,7 +210,7 @@ abstract class AbstractService
                             $this->config->getConfigData('address', 'global_settings'),
                             $this->config->getConfigData('postcode', 'global_settings'),
                             $this->config->getConfigData('city', 'global_settings'),
-                            $this->getCountryName(),
+                            'France', //$this->getCountryName(),
                         ),
                         'contact' => array(
                             'firstname' => $this->config->getConfigData('firstname', 'global_settings'),
