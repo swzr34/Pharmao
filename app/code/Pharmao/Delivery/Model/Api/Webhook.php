@@ -46,19 +46,10 @@ class Webhook
         $returnArray = json_encode($data);
         if (!empty($jobData)) {
             $address = $jobData[0]['address'];
-            // $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/changed-status.log');
-            // $logger = new \Zend\Log\Logger();
-            // $logger->addWriter($writer);
-            
             $jobUpdate = $model->load($jobData[0]['id']);
             $jobUpdate->setStatus($status);
             $jobUpdate->setAdded(date("Y-m-d H:i:s"));
             $saveData = $jobUpdate->save();
-            
-            // $logger->info('res : ' . $returnArray);
-            // $logger->info('job_id : ' . $data['id']);
-            // $logger->info('status : ' . $data['status']);
-            // $logger->info('status : ' .  date("Y-m-d H:i:s"));
             
             // Generate Log File
         	$logData = array(
