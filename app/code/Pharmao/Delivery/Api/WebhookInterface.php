@@ -9,7 +9,5 @@ interface WebhookInterface
      * @param mixed $data
      * @return array
      */
-    
-
     public function getPost($data);
 }

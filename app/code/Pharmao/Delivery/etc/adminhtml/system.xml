@@ -29,11 +29,7 @@
                 <field id="button_id" translate="label comment" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Pharmao\Delivery\Block\System\Config\Button</frontend_model>
                 </field>
-                <field id="access_token" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Access Token</label>
-                    <frontend_model>Pharmao\Delivery\Block\System\Config\Form\Field\Disable</frontend_model>
-                </field>
-                <field id="field_hide" translate="label" type="hidden" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="access_token" translate="label" type="hidden" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Acceess Token Hidden</label>
                 </field>
                 <field id="pharmao_delivery_active_status" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -41,18 +37,33 @@
                     <validate>required-entry</validate>
                     <source_model>Pharmao\Delivery\Model\Config\Source\Status</source_model>
                 </field>
-                <field id="pharmao_delivery_within_one_hour" translate="label" type="checkbox" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="pharmao_delivery_active_stat" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Choose which Stat to create job!</label>
+                    <validate>required-entry</validate>
+                    <!--<source_model>Pharmao\Delivery\Model\Config\Source\Status</source_model>-->
+                </field>
+                <field id="pharmao_delivery_within_one_hour" translate="label" type="checkbox" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Is within one hour?</label>
                 </field>
-                <field id="environment" translate="label" type="radios" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="environment" translate="label" type="radios" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Environment</label>
                     <source_model>Pharmao\Delivery\Model\Config\Source\Environment</source_model>
                 </field>
-                <field id="distance_range" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="base_url" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Base Url</label>
+                    <comment>Your Pharmao delivery API base url.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="distance_range" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Distance Range (km)</label>
                     <validate>required-entry validate-number</validate>
                     <source_model>Pharmao\Delivery\Model\Config\Source\Kilometers</source_model>
-                </field>				
+                </field>
+                <field id="pharmaocountry" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Country</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
             </group>
             <group id="global_settings" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Global Settings</label>

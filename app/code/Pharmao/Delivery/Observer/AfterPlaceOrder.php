@@ -7,12 +7,15 @@ class AfterPlaceOrder implements ObserverInterface
 {
     protected $_addressFactory;
     
+    protected $helper;
+    
     public function __construct(
-          \Magento\Framework\View\Element\Template\Context $context,
-          \Pharmao\Delivery\Model\AddressFactory $addressFactory,  array $data = []
+          \Pharmao\Delivery\Model\AddressFactory $addressFactory,  
+          \Pharmao\Delivery\Helper\Data $helper
           )
     {
       $this->_addressFactory = $addressFactory;
+      $this->helper = $helper;
     }
      
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -37,18 +40,18 @@ class AfterPlaceOrder implements ObserverInterface
         $street1 = isset($street_data[0]) ? $street_data[0] : '';
         $street2 = isset($street_data[1]) ? $street_data[1] : '';
         $street3 = isset($street_data[2]) ? $street_data[2] : '';
-        $country = "France";
+        $country = $this->helper->getCountryName();
         $email = $order->getCustomerEmail();
            
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/after-order.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info('result : ' . $street1);
-        $logger->info('result : ' . $street2);
-        $logger->info('result : ' . $street3);
+        
         $model = $this->_addressFactory->create();
-        $collection = $model->getCollection()->addFieldToFilter('email', trim($email))->addFieldToFilter('street1', trim($street1))->addFieldToFilter('street2', trim($street2))->addFieldToFilter('city', trim($city))->addFieldToFilter('postCode', trim($postCode))->addFieldToFilter('country', trim($country));
-        $logger->info('result : ' . print_r($collection->getData(), true));
+        $collection = $model->getCollection()
+                        ->addFieldToFilter('email', trim($email))
+                        ->addFieldToFilter('street1', trim($street1))
+                        ->addFieldToFilter('street2', trim($street2))
+                        ->addFieldToFilter('city', trim($city))
+                        ->addFieldToFilter('postCode', trim($postCode))
+                        ->addFieldToFilter('country', trim($country));
         
         if (empty($collection->getData())) {
         	$model->addData([
@@ -63,6 +66,17 @@ class AfterPlaceOrder implements ObserverInterface
         	"country" => trim($country)
         	]);
             $saveData = $model->save();
+            
         }
+        
+        // Generate Log File
+        $logData = array(
+                        'street1' => $street1,
+                        'street2' => $street2,
+                        'street3' => $street3,
+                        'res' => print_r($collection->getData(), true),
+                        'order_id' => $order->getId()
+                );
+        $this->helper->generateLog('after-order', $logData);
     }
 }

@@ -25,6 +25,8 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
     protected $scopeConfig;
     
     protected $_cart;
+    
+    protected $helper;
 
     /**
      * Shipping constructor.
@@ -37,7 +39,6 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
      * @param array                                                       $data
      */
     public function __construct(
-        \Magento\Framework\HTTP\Client\Curl $curl,
         \Magento\Framework\Serialize\SerializerInterface $serializer, 
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Shipping\Model\Rate\ResultFactory $rateFactory,
@@ -46,16 +47,18 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         \Psr\Log\LoggerInterface $logger,
         \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
         \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
-        array $data = []
+        \Pharmao\Delivery\Model\Delivery $deliveryModel,
+        \Pharmao\Delivery\Helper\Data $helper
     ) {
         $this->serializer = $serializer;
-        $this->_curl = $curl;
         $this->scopeConfig = $scopeConfig;
         $this->_rateFactory = $rateFactory;
         $this->_rateResultFactory = $rateResultFactory;
         $this->_cart = $cartModel;
         $this->_rateMethodFactory = $rateMethodFactory;
-        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
+        $this->model = $deliveryModel;
+        $this->helper = $helper;
+        parent::__construct($scopeConfig, $rateErrorFactory, $logger);
     }
 
     /**
@@ -89,12 +92,11 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             return false;
         }
         
-        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
-        $fullAddress = $address . ", " . $postCode . " " . $city . ", " . "France";
-        $limitationOfKms = $this->scopeConfig->getValue('delivery_configuration/general/distance_range', $storeScope);
+        $fullAddress = $address . ", " . $postCode . " " . $city . ", " . $this->helper->getCountryName();
+        
         $items = $this->_cart->getQuote()->getAllItems();
         $sub_total = $this->_cart->getQuote()->getSubtotal();
         $total = $this->_cart->getQuote()->getGrandTotal();
@@ -104,24 +106,14 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             $weight += ($item->getWeight() * $item->getQty()) ;        
         }
         
-        $weight_unit = '';
-        if ($this->scopeConfig->getValue('general/locale/weight_unit', $storeScope) == 'kgs') {
-            $weight_unit = '10';
+        $weight_limit = '';
+        if ($this->model->getWeightUnit() == 'kgs') {
+            $weight_limit = '10';
         } else {
-            $weight_unit = '22.0462';
+            $weight_limit = '22.0462';
         }
         
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/price-log.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        
-        $logger->info('unit : ' . $this->scopeConfig->getValue('general/locale/weight_unit', $storeScope));
-        $logger->info('weight : ' . $weight);
-        $logger->info('Sub : ' . $sub_total);
-        $logger->info('Total : ' . $total);
-        //lbs 22.0462 -> 10kgs
-        
-        $url = 'https://delivery-sandbox.pharmao.fr/v1/job/price';
+        $url = $this->model->getBaseUrl('/job/price');
         $params = array(
             "job" => array(
                 "external_order_amount" => $total,
@@ -131,28 +123,36 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
                 "transport_type" => "bike",
                 "pickups" => [
                     array(
-                        "address" => $this->scopeConfig->getValue('delivery_configuration/global_settings/address', $storeScope) . ", ". $this->scopeConfig->getValue('delivery_configuration/global_settings/postcode', $storeScope) . " " . $this->scopeConfig->getValue('delivery_configuration/global_settings/city', $storeScope) . ", France",
+                        "address" => $this->model->getConfigData('address', 'global_settings') . ", ". $this->model->getConfigData('postcode', 'global_settings') . " " . $this->model->getConfigData('city', 'global_settings') . ", " . $this->helper->getCountryName(),
                     ),
                 ],
                 "dropoffs" => array(
                     array(
-                        "address" => $fullAddress . ", France",
+                        "address" => $fullAddress . ", " . $this->helper->getCountryName(),
                     ),
                 )
             )
         );
-        
-        $this->_curl->post($url, $params);
-        $response = $this->_curl->getBody();
-        $logger->info('res : ' . $response);
-        $data = json_decode($response);
+        $data = $this->helper->performPost($url, $params);
         $result = $this->_rateResultFactory->create();
-
+        
+        // Generate Log File
+        $logData = array(
+                            'weight_unit' => $this->model->getWeightUnit(),
+                            'weight' => $weight,
+                            'Sub' => $sub_total,
+                            'Total' => $total,
+                            'Url' => $url,
+                            'res' => print_r($data, true)
+                    );
+        $this->helper->generateLog('price-log', $logData);
+        
         /*store shipping in session*/
         if (isset($data->data->amount)) {
-            if (isset($data->data->distance) && $data->data->distance < $limitationOfKms && $weight < $weight_unit) {
+            $limitationOfKms = $this->model->getConfigData('distance_range');
+            
+            if (isset($data->data->distance) && $data->data->distance < $limitationOfKms && $weight < $weight_limit) {
 
-                /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
                 $method = $this->_rateMethodFactory->create();
         
                 $method->setCarrier($this->_code);

@@ -22,10 +22,17 @@ class Index extends \Magento\Backend\App\Action
     * @param PageFactory $pageFactory
     */
     
-    public function __construct(Context $context, PageFactory $pageFactory, \Magento\Framework\HTTP\Client\Curl $curl, \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory)
+    public function __construct(Context $context, PageFactory $pageFactory, 
+                            \Magento\Framework\HTTP\Client\Curl $curl,
+                            \Pharmao\Delivery\Model\Delivery $deliveryModel,
+                            \Pharmao\Delivery\Helper\Data $helper,
+                            \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+                        )
     {
         $this->resultPageFactory = $pageFactory;
         $this->_curl = $curl;
+        $this->model = $deliveryModel;
+        $this->helper = $helper;
         $this->resultJsonFactory = $resultJsonFactory;
         parent::__construct($context);
     }
@@ -39,12 +46,17 @@ class Index extends \Magento\Backend\App\Action
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
-        $url = 'https://delivery-sandbox.pharmao.fr/v1/create-token';
+        $url = $this->model->getBaseUrl('/create-token');
         $params = array('secret' => $post['secret'], 'username' => $post['username'], 'password' => $post['password']);
-        $this->_curl->post($url, $params);
-        $response = $this->_curl->getBody();
+        $response = $this->helper->performPost($url, $params);
         /** @var \Magento\Framework\Controller\Result\Json $result */
 		$result = $this->resultJsonFactory->create();
-		return $result->setData(['data' => $response]);
+		// Generate Log File
+        	$logData = array(
+        	    'secret' => $post['secret'], 'username' => $post['username'], 'password' => $post['password'],
+                            'validate' => print_r($response, true)
+                    );
+            $this->helper->generateLog('validate', $logData);
+		return $result->setData(['data' => json_encode($response)]);
     }
 }

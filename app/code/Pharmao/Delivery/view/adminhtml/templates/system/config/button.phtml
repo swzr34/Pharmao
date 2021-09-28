@@ -10,7 +10,7 @@ require([
         var delivery_configuration_general_password = jQuery('#delivery_configuration_general_password').val();
         jQuery('body').trigger('processStart');
         jQuery.ajax({
-          url: "<?php echo $block->getControllerUrl() ?>",
+          url: "<?php echo $block->getControllerUrl('delivery/index/index') ?>",
           type: "POST",
           dataType:'json',
           showLoader: true,
@@ -22,14 +22,11 @@ require([
               console.log(data.access_token);
               if(data.access_token != undefined) {
                 jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:green">API configure successfully.</span>'); 
-                jQuery('#delivery_configuration_general_field_hide').val(data.access_token);
-                jQuery('#delivery_configuration_general_field_hide').attr('value', data.access_token);
                 jQuery('#delivery_configuration_general_access_token').val(data.access_token);
                 jQuery('#delivery_configuration_general_access_token').attr('value', data.access_token);
             } else {
                 
                 jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:red">Check credentials.</span>'); 
-                jQuery('#delivery_configuration_general_access_token_hide').val('');
                 jQuery('#delivery_configuration_general_access_token').val('');
             }
             jQuery('body').trigger('processStop');
@@ -41,14 +38,44 @@ require([
         }
         });
     }
- 
+    
+    function callAjaxForGetState() {
+        alert(jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val());   
+        var status = jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val();
+        
+        if(status != '') {
+            jQuery.ajax({
+                  url: "<?php echo $block->getControllerUrl('delivery/State/index') ?>",
+                  type: "POST",
+                  dataType:'json',
+                  showLoader: true,
+                  data: {status: status},
+                  success: function( data ) {
+                      jQuery('#save').addClass('submit_config');
+                      var data = JSON.parse(data.data);
+                      console.log(data);
+                      $('#select1').append(data);
+                      
+                    jQuery('body').trigger('processStop');
+                      
+                  },
+                  error: function (request, status, error) {
+                    alert('error');
+                        // jQuery('#delivery_configuration_general_api_key_sandbox').closest('td').next().html('<span style="color:red">Check credentials.</span>'); 
+                }
+            });    
+        }
+    }
+ alert('asdasd====' + jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val());
     jQuery('#validate_api').click(function () {
         callAjax();
     });
+    jQuery('#delivery_configuration_general_pharmao_delivery_active_status').change(function () {
+        callAjaxForGetState();
+    });
     
     
-    jQuery('#row_delivery_configuration_general_field_hide').css('display','none');
-    jQuery('#delivery_configuration_general_access_token').val(jQuery('#delivery_configuration_general_field_hide').val());
+    jQuery('#row_delivery_configuration_general_access_token').css('display','none');
 
 });
 </script>

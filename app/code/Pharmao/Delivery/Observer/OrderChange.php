@@ -4,42 +4,29 @@ namespace Pharmao\Delivery\Observer;
 
 class OrderChange implements \Magento\Framework\Event\ObserverInterface
 {
-  protected $scopeConfig;
-  
-  protected $_jobFactory;
+    protected $_jobFactory;
 
   public function __construct(\Magento\Framework\HTTP\Client\Curl $curl, 
-                                \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
                                 \Pharmao\Delivery\Model\JobFactory $jobFactory,
-                                array $data = [])
+                                \Pharmao\Delivery\Model\Delivery $deliveryModel,
+                                \Pharmao\Delivery\Helper\Data $helper
+                            )
   {
     $this->_curl = $curl;
-    $this->scopeConfig = $scopeConfig;
     $this->_jobFactory = $jobFactory;
+    $this->model = $deliveryModel;
+    $this->helper = $helper;
   }
 
   public function execute(\Magento\Framework\Event\Observer $observer)
   {
-    $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-    $assignment_code = random_int(1000000000, 9999999999);
+    $assignment_code = $this->helper->generateRandomNumber();
     $order = $observer->getEvent()->getOrder();
 
-    $shippingAddress = $order->getShippingAddress();
-    $street_data = $shippingAddress->getStreet();
-    $street_0 = isset($street_data[0]) ? $street_data[0] : '';
-    $street_1 = isset($street_data[1]) ? $street_data[1] : '';
-    $postCode = $shippingAddress->getPostCode();
-    $city = $shippingAddress->getCity();
-    $full_address = $street_0 . " " . $street_1 . ", " . $postCode . " " . $city . ", " . "France";
-    $access_token = "Bearer " . $this->scopeConfig->getValue('delivery_configuration/general/field_hide', $storeScope);
-    $config_status = $this->scopeConfig->getValue('delivery_configuration/general/pharmao_delivery_active_status', $storeScope);
-
-    $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/status-updated.log');
-    $logger = new \Zend\Log\Logger();
-    $logger->addWriter($writer);
-
-    $logger->info('status : ' . $config_status);
-    $logger->info('statu456s : ' . $order->getStatus());
+    $address_data = $this->helper->getFullAddress($order->getShippingAddress());
+    $full_address = $address_data['full_address'];
+    $access_token = "Bearer " . $this->model->getConfigData('access_token');
+    $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
 
     if ($order->getStatus() == $config_status) {
       $data = array(
@@ -59,17 +46,17 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
               'comment' => 'Rentrez dans la pharmacie, allez au comptoir et demander la commande Pharmao Nom: ' . $order->getCustomerFirstname() . " " . $order->getCustomerLastname(),
               'contact' =>
               array(
-                'firstname' => $this->scopeConfig->getValue('delivery_configuration/global_settings/firstname', $storeScope),
-                'phone' => $this->scopeConfig->getValue('delivery_configuration/global_settings/phone', $storeScope),
+                'firstname' => $this->model->getConfigData('firstname', 'global_settings'),
+                'phone' => $this->model->getConfigData('phone', 'global_settings'),
               ),
-              'address' => $this->scopeConfig->getValue('delivery_configuration/global_settings/address', $storeScope) . ", " . $this->scopeConfig->getValue('delivery_configuration/global_settings/postcode', $storeScope) . " " . $this->scopeConfig->getValue('delivery_configuration/global_settings/city', $storeScope) . ", France",
+                  'address' => $this->model->getConfigData('address', 'global_settings') . ", " . $this->model->getConfigData('postcode', 'global_settings') . " " . $this->model->getConfigData('city', 'global_settings') . ", " . $this->helper->getCountryName(),
             ),
           ),
           'dropoffs' =>
           array(
             0 =>
             array(
-              'comment' => $street_1,
+              'comment' => $address_data['street_1'],
               'address' => $full_address,
               'contact' =>
               array(
@@ -85,36 +72,29 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
 
       $data_json = json_encode($data);
 
-      $validate_url = 'https://delivery-sandbox.pharmao.fr/v1/job/validate';
-      $headers = ["Content-Type" => "application/json", "Authorization" => $access_token];
-      $this->_curl->setHeaders($headers);
-      $this->_curl->post($validate_url, $data_json);
-      $response = $this->_curl->getBody();
-
-      if ($response) {
-        $data = json_decode($response);
-      } else {
-        $data = '';
-      }
-
-      if (isset($data->data->is_valid) && $data->data->is_valid == true) {
-        $logger->info('response : ' . $data->data->is_valid);
+      $validate_url = $this->model->getBaseUrl('/job/validate');
+      $response = $this->helper->performPost($validate_url, $data_json);
+       
+      if(isset($response->data->is_valid) && $response->data->is_valid == true) {
         $model = $this->_jobFactory->create();
-        $creat_job_url = 'https://delivery-sandbox.pharmao.fr/v1/jobs';
-        $this->_curl->setHeaders($headers);
-        $this->_curl->post($creat_job_url, $data_json);
-        $job_response = $this->_curl->getBody();
-        $job_response_decode = json_decode($job_response, true);
+        $creat_job_url = $this->model->getBaseUrl('/jobs');
+        $job_response_decode = $this->helper->performPost($creat_job_url, $data_json);
           $model->addData([
         	"order_id" => $order->getEntityId(),
-        	"job_id" => $job_response_decode['data']['job_id'],
-        	"status" => $job_response_decode['data']['status'],
+        	"job_id" => $job_response_decode->data->job_id,
+        	"status" => $job_response_decode->data->status,
         	"address" => $full_address,
         	"added" => date("Y-m-d H:i:s")
         	]);
             $saveData = $model->save();
-        	$logger->info('final : ' .print_r($job_response_decode, true));
-      }
+            
+            // Generate Log File
+        	$logData = array(
+                            'job_response' => print_r($job_response_decode, true),
+                            'job_response1' => print_r($data, true)
+                    );
+            $this->helper->generateLog('status-updated', $logData);
+      } 
     }
   }
 }

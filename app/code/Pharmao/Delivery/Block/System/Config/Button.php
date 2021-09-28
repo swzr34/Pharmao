@@ -22,9 +22,9 @@ class Button extends Field
         return $this->_toHtml();
     }
     
-    public function getControllerUrl()
+    public function getControllerUrl($url)
     {
-        return $this->getUrl('delivery/index/index');
+        return $this->getUrl($url);
     }
     
     public function getButtonHtml()
