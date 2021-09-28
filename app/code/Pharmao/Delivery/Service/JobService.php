@@ -1,8 +1,8 @@
 <?php
 
-namespace Pharmao\Delivery\Helper\Service;
+namespace Pharmao\Delivery\Service;
 
-use \Pharmao\Delivery\Helper\Service\AbstractService;
+use \Pharmao\Delivery\Service\AbstractService;
 
 class JobService extends AbstractService
 {
