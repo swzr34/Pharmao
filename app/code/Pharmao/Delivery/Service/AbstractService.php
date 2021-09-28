@@ -4,6 +4,7 @@ namespace Pharmao\Delivery\Service;
 
 use \Pharmao\Delivery\Model\Delivery;
 use \Magento\Framework\HTTP\Client\Curl;
+use \Magento\Directory\Model\CountryFactory;
 
 abstract class AbstractService
 {
@@ -167,6 +168,18 @@ abstract class AbstractService
     }
 
     /**
+     * Get Country Name
+     * @return string
+     */
+    public function getCountryName() {
+        $countryFactory = new CountryFactory();
+
+        $country = $countryFactory->create()->loadByCode($this->config->getConfigData('pharmaocountry'));
+
+        return $country->getName();
+    }
+
+    /**
      * Build Job Data
      * @param  array $data
      * @return array
@@ -197,12 +210,12 @@ abstract class AbstractService
                             $this->config->getConfigData('address', 'global_settings'),
                             $this->config->getConfigData('postcode', 'global_settings'),
                             $this->config->getConfigData('city', 'global_settings'),
-                            $this->helper->getCountryName(),
+                            $this->getCountryName(),
                         ),
                         'contact' => array(
                             'firstname' => $this->config->getConfigData('firstname', 'global_settings'),
                             'phone' => $this->config->getConfigData('phone', 'global_settings'),
-                            //'email' => $this->config->getConfigData('email', 'global_settings'),
+                            'email' => $this->config->getConfigData('username', 'global'),
                         ),
                     ),
                 ),
