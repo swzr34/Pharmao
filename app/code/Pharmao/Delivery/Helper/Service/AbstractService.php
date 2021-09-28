@@ -1,6 +1,6 @@
 <?php
 
-namespace Pharmao\Delivery\Service;
+namespace Pharmao\Delivery\Helper\Service;
 
 use \Pharmao\Delivery\Model\Delivery;
 use \Magento\Framework\HTTP\Client\Curl;
