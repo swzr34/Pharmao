@@ -1,14 +1,18 @@
 <?php 
 namespace Pharmao\Delivery\Setup;
+
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Ddl\Table;
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface{
-    public function install(SchemaSetupInterface $setup,ModuleContextInterface $context){
+
+class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface {
+
+    public function install(SchemaSetupInterface $setup,ModuleContextInterface $context) 
+    {
         $setup->startSetup();
         $conn = $setup->getConnection();
         $tableName = $setup->getTable('pharmao_cache_addresses');
-        if($conn->isTableExists($tableName) != true){
+        if ($conn->isTableExists($tableName) != true) {
             $table = $conn->newTable($tableName)
                             ->addColumn(
                                 'id',
@@ -73,8 +77,10 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface{
                             ->setOption('charset','utf8');
             $conn->createTable($table);
         }
+
         $tableJobName = $setup->getTable('pharmao_job');
-        if($conn->isTableExists($tableJobName) != true){
+
+        if ($conn->isTableExists($tableJobName) != true) {
             $table_job = $conn->newTable($tableJobName)
                             ->addColumn(
                                 'id',
@@ -114,7 +120,8 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface{
                             ->setOption('charset','utf8');
             $conn->createTable($table_job);
         }
+
         $setup->endSetup();
     }
 }
- ?>
+?>

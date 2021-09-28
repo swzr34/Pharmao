@@ -27,8 +27,16 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
     $full_address = $address_data['full_address'];
     $access_token = "Bearer " . $this->model->getConfigData('access_token');
     $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
-
-    if ($order->getStatus() == $config_status) {
+    $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
+    // Generate Log File
+        	$logData = array(
+                            'status' => $order->getStatus(),
+                            'state' => $order->getState(),
+                            'status1' => $config_status,
+                            'state1' => $config_state
+                    );
+            $this->helper->generateLog('status-updated', $logData);
+    if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
       $data = array(
         'job' =>
         array(

@@ -7,12 +7,13 @@ use Magento\Framework\Setup\ModuleContextInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
-	public function upgrade( SchemaSetupInterface $setup, ModuleContextInterface $context ) {
+	public function upgrade( SchemaSetupInterface $setup, ModuleContextInterface $context ) 
+	{
 		$installer = $setup;
 
 		$installer->startSetup();
 
-		if(version_compare($context->getVersion(), '1.1.0', '<')) {
+		if (version_compare($context->getVersion(), '1.1.0', '<')) {
 			$installer->getConnection()->addColumn(
 				$installer->getTable( 'sales_order' ),
 				'job_id',
@@ -35,8 +36,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
 				]
 			);
 		}
-
-
 
 		$installer->endSetup();
 	}

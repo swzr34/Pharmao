@@ -38,9 +38,9 @@
                     <source_model>Pharmao\Delivery\Model\Config\Source\Status</source_model>
                 </field>
                 <field id="pharmao_delivery_active_stat" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Choose which Stat to create job!</label>
+                    <label>Choose which State to create job!</label>
                     <validate>required-entry</validate>
-                    <!--<source_model>Pharmao\Delivery\Model\Config\Source\Status</source_model>-->
+                    <source_model>Pharmao\Delivery\Model\Config\Source\State</source_model>
                 </field>
                 <field id="pharmao_delivery_within_one_hour" translate="label" type="checkbox" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Is within one hour?</label>
@@ -54,12 +54,17 @@
                     <comment>Your Pharmao delivery API base url.</comment>
                     <validate>required-entry</validate>
                 </field>
-                <field id="distance_range" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="job_url" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Base Job Map Url</label>
+                    <comment>Your Pharmao delivery API job map url.</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="distance_range" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Distance Range (km)</label>
                     <validate>required-entry validate-number</validate>
                     <source_model>Pharmao\Delivery\Model\Config\Source\Kilometers</source_model>
                 </field>
-                <field id="pharmaocountry" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="pharmaocountry" translate="label" type="select" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Country</label>
                     <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
                     <can_be_empty>1</can_be_empty>
