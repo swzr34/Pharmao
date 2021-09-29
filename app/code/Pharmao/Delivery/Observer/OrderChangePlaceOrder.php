@@ -37,7 +37,8 @@ class OrderChangePlaceOrder
         $full_address = $address_data['full_address'];
         $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
-        $config_is_within_one_hour = ($this->model->getConfigData('pharmao_delivery_within_one_hour') ? $this->model->getConfigData('pharmao_delivery_within_one_hour') : '0');
+        $isWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
+        $configIsWithinOneHour = $isWithinOneHour ? $isWithinOneHour : 0;
         // Generate Log File
         $logData = array(
             'status' => $order->getStatus(),
@@ -45,7 +46,7 @@ class OrderChangePlaceOrder
             'status1' => $config_status,
             'state1' => $config_state,
             'order_amount' => $order->getGrandTotal(),
-            'is_within_one_hour' => $config_is_within_one_hour
+            'is_within_one_hour' => $configIsWithinOneHour
         );
         $this->helper->generateLog('status-updated', $logData);
 
@@ -55,7 +56,7 @@ class OrderChangePlaceOrder
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
                 'order_id' => $order->getEntityId(),
-                'is_within_one_hour' => $config_is_within_one_hour,
+                'is_within_one_hour' => $configIsWithinOneHour,
                 'customer_firstname' => $order->getCustomerFirstname(),
                 'customer_lastname' => $order->getCustomerLastname(),
                 'customer_comment' => $address_data['street_1'],
