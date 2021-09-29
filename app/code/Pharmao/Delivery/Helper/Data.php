@@ -84,6 +84,7 @@ class Data extends AbstractHelper
         }
 
         $pharmaoDelivery = new JobService([
+            'config' => $this->model,
             'secret' => $this->model->getConfigData('api_key', 'general'),
             'username' => $this->model->getConfigData('username', 'general'),
             'password' => $this->model->getConfigData('password', 'general'),

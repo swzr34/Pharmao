@@ -50,7 +50,7 @@ abstract class AbstractService
         $this->baseUrl = $params['base_url'] . $this->version;
 
         $this->_curlClient = new Curl();
-        $this->config = new Delivery();
+        $this->config = $params['config'];
 
         if (empty($this->accessToken)) {
             $data = array(
