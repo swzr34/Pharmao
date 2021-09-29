@@ -27,8 +27,8 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $full_address = $address_data['full_address'];
         $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
-        $isWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
-        $configIsWithinOneHour = $isWithinOneHour ? $isWithinOneHour : 0;
+        $configIsWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
+        $isWithinOneHour = ($configIsWithinOneHour) ? 1 : 0;
        
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             
@@ -37,7 +37,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
                 'order_id' => $order->getEntityId(),
-                'is_within_one_hour' => $configIsWithinOneHour,
+                'is_within_one_hour' => $isWithinOneHour,
                 'customer_firstname' => $order->getCustomerFirstname(),
                 'customer_lastname' => $order->getCustomerLastname(),
                 'customer_comment' => $address_data['street_1'],
@@ -52,7 +52,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                     'status1' => $config_status,
                     'state1' => $config_state,
                     'order_amount' => $order->getGrandTotal(),
-                    'is_within_one_hour' => $configIsWithinOneHour,
+                    'is_within_one_hour' => $isWithinOneHour,
                     'res' => print_r($response)
                    
                 );
