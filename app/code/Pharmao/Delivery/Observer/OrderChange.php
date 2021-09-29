@@ -27,21 +27,16 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $full_address = $address_data['full_address'];
         $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
-        // Generate Log File
-        $logData = array(
-            'status' => $order->getStatus(),
-            'state' => $order->getState(),
-            'status1' => $config_status,
-            'state1' => $config_state
-        );
-        $this->helper->generateLog('status-updated', $logData);
+        $config_is_within_one_hour = ($this->model->getConfigData('pharmao_delivery_within_one_hour') ? $this->model->getConfigData('pharmao_delivery_within_one_hour') : '0');
+       
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
+            
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
             $response = $pharmaoDeliveryJobInstance->validateAndCreateJob(array(
-                'order_amount' => 199, // Need to be calculated dynamically
+                'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
                 'order_id' => $order->getEntityId(),
-                'is_within_one_hour' => 0,// Need to make this dynamic
+                'is_within_one_hour' => $config_is_within_one_hour,
                 'customer_firstname' => $order->getCustomerFirstname(),
                 'customer_lastname' => $order->getCustomerLastname(),
                 'customer_comment' => $address_data['street_1'],
@@ -49,7 +44,18 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                 'customer_phone' => $order->getShippingAddress()->getTelephone(),
                 'customer_email' => $order->getCustomerEmail(),
             ));
-
+            // Generate Log File
+                $logData = array(
+                    'status' => $order->getStatus(),
+                    'state' => $order->getState(),
+                    'status1' => $config_status,
+                    'state1' => $config_state,
+                    'order_amount' => $order->getGrandTotal(),
+                    'is_within_one_hour' => $config_is_within_one_hour,
+                    'res' => print_r($response)
+                   
+                );
+                $this->helper->generateLog('status-updated', $logData);
             if ($response && isset($response->code) && 200 == $response->code) {
                 $model = $this->_jobFactory->create();
                 $model->addData([

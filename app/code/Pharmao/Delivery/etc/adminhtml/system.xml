@@ -44,6 +44,7 @@
                 </field>
                 <field id="pharmao_delivery_within_one_hour" translate="label" type="checkbox" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Is within one hour?</label>
+                    <frontend_model>Pharmao\Delivery\Block\System\Config\Checkbox</frontend_model>
                 </field>
                 <field id="environment" translate="label" type="radios" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Environment</label>
