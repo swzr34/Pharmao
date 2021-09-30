@@ -52,6 +52,7 @@ abstract class AbstractService
 
         $this->_curlClient = new Curl();
         $this->config = $params['config'];
+        $this->country = $params['country'];
         
         if (empty($this->accessToken)) {
             
@@ -174,9 +175,9 @@ abstract class AbstractService
      * @return string
      */
     public function getCountryName() {
-        $countryFactory = new CountryFactory();
+        //$countryFactory = new CountryFactory();
 
-        $country = $countryFactory->create()->loadByCode($this->config->getConfigData('pharmaocountry'));
+        $country = $this->country->create()->loadByCode($this->config->getConfigData('pharmaocountry'));
 
         return $country->getName();
     }
@@ -212,12 +213,13 @@ abstract class AbstractService
                             $this->config->getConfigData('address', 'global_settings'),
                             $this->config->getConfigData('postcode', 'global_settings'),
                             $this->config->getConfigData('city', 'global_settings'),
-                            'France' //$this->getCountryName(),
+                            $this->getCountryName()
                         ),
                         'contact' => array(
                             'firstname' => $this->config->getConfigData('firstname', 'global_settings'),
                             'phone' => $this->config->getConfigData('phone', 'global_settings'),
-                            'email' => $this->config->getConfigData('username', 'global'),
+                            'email' => $this->config->getConfigData('username', 'global_settings'),
+                            "company" => $this->config->getConfigData('company_name', 'global_settings'),
                         ),
                     ),
                 ),

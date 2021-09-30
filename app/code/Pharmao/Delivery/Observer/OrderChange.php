@@ -29,7 +29,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
         $configIsWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
         $isWithinOneHour = ($configIsWithinOneHour) ? 1 : 0;
-       
+        
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
