@@ -191,8 +191,8 @@ abstract class AbstractService
         $job = array(
             'job' => array(
                 'client_type' => 'M2',
-                // 'is_external' => 1,
-                // 'external_order_amount' => $data['order_amount'],
+                'is_external' => 1,
+                'external_order_amount' => $data['order_amount'],
                 'assignment_code' => $data['assignment_code'],
                 'external_order_reference' => $data['order_id'],
                 'transport_type' => 'Bike',
