@@ -2,8 +2,8 @@
 
 namespace Pharmao\Delivery\Helper;
 
-use \Pharmao\Delivery\Helper\Service\JobService;
-use \Magento\Framework\App\Helper\AbstractHelper;
+use Pharmao\Delivery\Helper\Service\JobService;
+use Magento\Framework\App\Helper\AbstractHelper;
 
 class Data extends AbstractHelper
 {
@@ -82,7 +82,7 @@ class Data extends AbstractHelper
         if (!$this->model->getConfigData('api_key', 'general')) {
             return false;
         }
-
+        
         $pharmaoDelivery = new JobService([
             'config' => $this->model,
             'secret' => $this->model->getConfigData('api_key', 'general'),
@@ -92,7 +92,6 @@ class Data extends AbstractHelper
             'base_url' => ($this->model->getConfigData('environment', 'general'))
                 ? $this->environments['production'] : $this->environments['sandbox'],
         ]);
-
         return $pharmaoDelivery;
     }
 }

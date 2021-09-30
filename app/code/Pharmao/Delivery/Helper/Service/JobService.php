@@ -2,10 +2,11 @@
 
 namespace Pharmao\Delivery\Helper\Service;
 
-use \Pharmao\Delivery\Helper\Service\AbstractService;
+use Pharmao\Delivery\Helper\Service\AbstractService;
 
 class JobService extends AbstractService
 {
+    
     /**
      * Validate Job
      * @param  array $data
@@ -13,7 +14,7 @@ class JobService extends AbstractService
      */
     public function validateJob($data)
     {
-        $body = $this->post('/job/validate', $params);
+        $body = $this->post('/job/validate', $data);
 
         return $body;
     }
@@ -40,13 +41,13 @@ class JobService extends AbstractService
     public function validateAndCreateJob($data)
     {
         $params = $this->buildJobData($data);
-
+       
         $validationResponse = $this->validateJob($params);
 
         if (
             $validationResponse
             && isset($validationResponse->code)
-            && 200 == $validationResponse
+            && 200 == $validationResponse->code
             && $validationResponse->data->is_valid
         ) {
             return $this->post('/jobs', $params);

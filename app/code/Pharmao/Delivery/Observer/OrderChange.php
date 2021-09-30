@@ -33,6 +33,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
+
             $response = $pharmaoDeliveryJobInstance->validateAndCreateJob(array(
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
@@ -45,18 +46,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                 'customer_phone' => $order->getShippingAddress()->getTelephone(),
                 'customer_email' => $order->getCustomerEmail(),
             ));
-            // Generate Log File
-                $logData = array(
-                    'status' => $order->getStatus(),
-                    'state' => $order->getState(),
-                    'status1' => $config_status,
-                    'state1' => $config_state,
-                    'order_amount' => $order->getGrandTotal(),
-                    'is_within_one_hour' => $isWithinOneHour,
-                    'res' => print_r($response)
-                   
-                );
-                $this->helper->generateLog('status-updated', $logData);
+            
             if ($response && isset($response->code) && 200 == $response->code) {
                 $model = $this->_jobFactory->create();
                 $model->addData([

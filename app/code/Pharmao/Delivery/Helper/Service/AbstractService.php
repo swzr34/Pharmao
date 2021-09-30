@@ -2,9 +2,9 @@
 
 namespace Pharmao\Delivery\Helper\Service;
 
-use \Pharmao\Delivery\Model\Delivery;
-use \Magento\Framework\HTTP\Client\Curl;
-use \Magento\Directory\Model\CountryFactory;
+use Pharmao\Delivery\Model\Delivery;
+use Magento\Framework\HTTP\Client\Curl;
+use Magento\Directory\Model\CountryFactory;
 
 abstract class AbstractService
 {
@@ -44,6 +44,7 @@ abstract class AbstractService
      * @param array $params
      */
     public function __construct($params) {
+        
         $secret = $params['secret'];
         $username = $params['username'];
         $password = $params['password'];
@@ -51,15 +52,17 @@ abstract class AbstractService
 
         $this->_curlClient = new Curl();
         $this->config = $params['config'];
-
+        
         if (empty($this->accessToken)) {
+            
             $data = array(
                 'secret' => $secret,
                 'username' => $username,
                 'password' => $password,
             );
-
+            
             $tokenResponse = $this->post('/create-token', $data);
+            
             if (isset($tokenResponse->access_token)) {
                 $this->accessToken = $tokenResponse->access_token;
             }
@@ -144,10 +147,9 @@ abstract class AbstractService
      * @param  array $data
      * @return mixed
      */
-    public function post($endpont, $data)
+    public function post($endpoint, $data)
     {
         $this->setHeaders(array());
-
         $this->_curlClient->post($this->buildUrl($endpoint), json_encode($data));
 
         return $this->getResponseBody();
@@ -189,8 +191,8 @@ abstract class AbstractService
         $job = array(
             'job' => array(
                 'client_type' => 'M2',
-                'is_external' => 1,
-                'external_order_amount' => $data['order_amount'],
+                // 'is_external' => 1,
+                // 'external_order_amount' => $data['order_amount'],
                 'assignment_code' => $data['assignment_code'],
                 'external_order_reference' => $data['order_id'],
                 'transport_type' => 'Bike',
