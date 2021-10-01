@@ -140,7 +140,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $this->helper->generateLog('price-log', $logData);
         
         /*store shipping in session*/
-        if (isset($response->data->amount)) {
+        if ($response && isset($response->code) && 200 == $response->code) {
             $limitationOfKms = $this->model->getConfigData('distance_range');
             
             if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {

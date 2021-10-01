@@ -200,7 +200,7 @@ abstract class AbstractService
                 'package_type' => 'small',
                 'package_description' => '',
                 'comment' => 'this is a test comment',
-                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
+                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : 0,
                 'pickups' => array(
                     array(
                         'comment' => sprintf(
@@ -226,7 +226,7 @@ abstract class AbstractService
                 'dropoffs' => array(
                     array(
                         'comment' => isset($data['customer_comment']) ? $data['customer_comment'] : '',
-                        'address' => isset($data['customer_address']) ? $data['customer_address'] : '',
+                        'address' => $data['customer_address'],
                         'contact' =>  array(
                             'firstname' => isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
                             'lastname' => isset($data['customer_lastname']) ? $data['customer_lastname'] : '',
