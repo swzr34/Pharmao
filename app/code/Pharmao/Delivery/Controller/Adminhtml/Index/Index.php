@@ -40,18 +40,11 @@ class Index extends \Magento\Backend\App\Action
     */
     public function execute()
     {
-        $post = $this->getRequest()->getPostValue();
-        $url = $this->model->getBaseUrl('/create-token');
-        $params = array('secret' => $post['secret'], 'username' => $post['username'], 'password' => $post['password']);
-        $response = $this->helper->performPost($url, $params);
-        /** @var \Magento\Framework\Controller\Result\Json $result */
-		$result = $this->resultJsonFactory->create();
-		// Generate Log File
-        	$logData = array(
-        	    'secret' => $post['secret'], 'username' => $post['username'], 'password' => $post['password'],
-                            'validate' => print_r($response, true)
-                    );
-            $this->helper->generateLog('validate', $logData);
-		return $result->setData(['data' => json_encode($response)]);
+        $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
+        if ($pharmaoDeliveryJobInstance->getAccessToken() != null) {
+            /** @var \Magento\Framework\Controller\Result\Json $result */
+		    $result = $this->resultJsonFactory->create();
+            return $result->setData(['data' => 'Success']);    
+        }
     }
 }

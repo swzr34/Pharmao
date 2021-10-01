@@ -110,7 +110,7 @@ define([
             this.isEmailCheckComplete = $.Deferred();
             this.isLoading(true);
             this.checkRequest = checkEmailAvailability(this.isEmailCheckComplete, this.email());
-console.log('checking')
+
             $.when(this.isEmailCheckComplete).done(function () {
                 this.isPasswordVisible(false);
                 jQuery.ajax({

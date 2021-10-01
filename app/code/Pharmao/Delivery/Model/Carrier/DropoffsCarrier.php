@@ -92,6 +92,9 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             return false;
         }
         
+        $assignment_code = $this->helper->generateRandomNumber();
+        $configIsWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
+        $isWithinOneHour = ($configIsWithinOneHour) ? 1 : 0;
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
@@ -113,45 +116,34 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             $weight_limit = '22.0462';
         }
         
-        $url = $this->model->getBaseUrl('/job/price');
+        $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
+        // $url = $this->model->getBaseUrl('/job/price');
         $params = array(
-            "job" => array(
-                "external_order_amount" => $total,
-                "client_type" => 'magento',
-                "package_type" => "small",
-                "is_within_one_hour" => 1,
-                "transport_type" => "bike",
-                "pickups" => [
-                    array(
-                        "address" => $this->model->getConfigData('address', 'global_settings') . ", ". $this->model->getConfigData('postcode', 'global_settings') . " " . $this->model->getConfigData('city', 'global_settings') . ", " . $this->helper->getCountryName(),
-                    ),
-                ],
-                "dropoffs" => array(
-                    array(
-                        "address" => $fullAddress . ", " . $this->helper->getCountryName(),
-                    ),
-                )
-            )
+            'order_amount' => $total,
+            'assignment_code' => $assignment_code,
+            'order_id' => '',
+            'is_within_one_hour' => $isWithinOneHour,
+            'customer_address' => $fullAddress
         );
-        $data = $this->helper->performPost($url, $params);
+        
+        $response = $pharmaoDeliveryJobInstance->getPrice($params);
         $result = $this->_rateResultFactory->create();
         
         // Generate Log File
         $logData = array(
-                            'weight_unit' => $this->model->getWeightUnit(),
-                            'weight' => $weight,
-                            'Sub' => $sub_total,
-                            'Total' => $total,
-                            'Url' => $url,
-                            'res' => print_r($data, true)
+                        'weight_unit' => $this->model->getWeightUnit(),
+                        'weight' => $weight,
+                        'Sub' => $sub_total,
+                        'Total' => $total,
+                        'res' => print_r($response, true)
                     );
         $this->helper->generateLog('price-log', $logData);
         
         /*store shipping in session*/
-        if (isset($data->data->amount)) {
+        if (isset($response->data->amount)) {
             $limitationOfKms = $this->model->getConfigData('distance_range');
             
-            if (isset($data->data->distance) && $data->data->distance < $limitationOfKms && $weight < $weight_limit) {
+            if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {
 
                 $method = $this->_rateMethodFactory->create();
         
@@ -163,8 +155,8 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         
                 $amount = $this->getShippingPrice();
         
-                $method->setPrice($data->data->amount);
-                $method->setCost($data->data->amount);
+                $method->setPrice($response->data->amount);
+                $method->setCost($response->data->amount);
         
                 $result->append($method);
                 

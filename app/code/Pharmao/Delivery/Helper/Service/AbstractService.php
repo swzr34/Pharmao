@@ -193,20 +193,20 @@ abstract class AbstractService
             'job' => array(
                 'client_type' => 'M2',
                 'is_external' => 1,
-                'external_order_amount' => $data['order_amount'],
-                'assignment_code' => $data['assignment_code'],
-                'external_order_reference' => $data['order_id'],
+                'external_order_amount' => isset($data['order_amount']) ? $data['order_amount'] : '',
+                'assignment_code' => isset($data['assignment_code']) ? $data['assignment_code'] : '',
+                'external_order_reference' => isset($data['order_id']) ? $data['order_id'] : '',
                 'transport_type' => 'Bike',
                 'package_type' => 'small',
                 'package_description' => '',
                 'comment' => 'this is a test comment',
-                'is_within_one_hour' => $data['is_within_one_hour'],
+                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
                 'pickups' => array(
                     array(
                         'comment' => sprintf(
                             'Rentrez dans la pharmacie, allez au comptoir et demander la commande Pharmao Nom: %s %s',
-                            $data['customer_firstname'],
-                            $data['customer_lastname']
+                            isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
+                            isset($data['customer_lastname']) ? $data['customer_lastname'] : ''
                         ),
                         'address' => sprintf(
                             '%s, %s %s, %s',
@@ -225,13 +225,13 @@ abstract class AbstractService
                 ),
                 'dropoffs' => array(
                     array(
-                        'comment' => $data['customer_comment'],
-                        'address' => $data['customer_address'],
+                        'comment' => isset($data['customer_comment']) ? $data['customer_comment'] : '',
+                        'address' => isset($data['customer_address']) ? $data['customer_address'] : '',
                         'contact' =>  array(
-                            'firstname' => $data['customer_firstname'],
-                            'lastname' => $data['customer_lastname'],
-                            'phone' => $data['customer_phone'],
-                            'email' => $data['customer_email'],
+                            'firstname' => isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
+                            'lastname' => isset($data['customer_lastname']) ? $data['customer_lastname'] : '',
+                            'phone' => isset($data['customer_phone']) ? $data['customer_phone'] : '',
+                            'email' => isset($data['customer_email']) ? $data['customer_email'] : '',
                         ),
                     ),
                 ),

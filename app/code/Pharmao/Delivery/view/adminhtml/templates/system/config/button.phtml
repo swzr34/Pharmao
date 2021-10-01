@@ -17,15 +17,16 @@ require([
           data: {secret:delivery_configuration_general_api_key, username:delivery_configuration_general_username, password:delivery_configuration_general_password},
           success: function( data ) {
               jQuery('#save').addClass('submit_config');
-              var data = JSON.parse(data.data);
-              if(data.access_token != undefined) {
+              var res = data;
+              console.log(res);
+              if(res.data !== '') {
                 jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:green">API configure successfully.</span>'); 
-                jQuery('#delivery_configuration_general_access_token').val(data.access_token);
-                jQuery('#delivery_configuration_general_access_token').attr('value', data.access_token);
+                // jQuery('#delivery_configuration_general_access_token').val(data.access_token);
+                // jQuery('#delivery_configuration_general_access_token').attr('value', data.access_token);
             } else {
                 
                 jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:red">Check credentials.</span>'); 
-                jQuery('#delivery_configuration_general_access_token').val('');
+                // jQuery('#delivery_configuration_general_access_token').val('');
             }
             jQuery('body').trigger('processStop');
           },
