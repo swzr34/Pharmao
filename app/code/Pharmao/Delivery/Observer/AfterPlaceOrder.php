@@ -68,15 +68,5 @@ class AfterPlaceOrder implements ObserverInterface
             $saveData = $model->save();
             
         }
-        
-        // Generate Log File
-        $logData = array(
-                        'street1' => $street1,
-                        'street2' => $street2,
-                        'street3' => $street3,
-                        'res' => print_r($collection->getData(), true),
-                        'order_id' => $order->getId()
-                );
-        $this->helper->generateLog('after-order', $logData);
     }
 }

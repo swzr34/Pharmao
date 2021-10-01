@@ -50,14 +50,6 @@ class Webhook
             $jobUpdate->setStatus($status);
             $jobUpdate->setAdded(date("Y-m-d H:i:s"));
             $saveData = $jobUpdate->save();
-            
-            // Generate Log File
-        	$logData = array(
-                            'res' => $returnArray,
-                            'job_id' => $data['id'],
-                            'status' => $data['status']
-                    );
-            $this->helper->generateLog('job-status-updated', $logData);
         }
         return true;
     }

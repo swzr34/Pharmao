@@ -45,12 +45,6 @@ class Actions extends Column
      */
     public function prepareDataSource(array $dataSource)
     {
-        // Generate Log File
-    	$logData = array(
-                        'Job_Data' => print_r($dataSource, true)
-                );
-        $this->helper->generateLog('dataSource', $logData);
-        
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getData('name');
             foreach ($dataSource['data']['items'] as & $item) { 

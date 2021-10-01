@@ -39,16 +39,6 @@ class OrderChangePlaceOrder
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
         $configIsWithinOneHour = $this->model->getConfigData('pharmao_delivery_within_one_hour');
         $isWithinOneHour = ($configIsWithinOneHour) ? 1 : 0;
-        // Generate Log File
-        $logData = array(
-            'status' => $order->getStatus(),
-            'state' => $order->getState(),
-            'status1' => $config_status,
-            'state1' => $config_state,
-            'order_amount' => $order->getGrandTotal(),
-            'is_within_one_hour' => $isWithinOneHour
-        );
-        $this->helper->generateLog('status-updated', $logData);
 
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();

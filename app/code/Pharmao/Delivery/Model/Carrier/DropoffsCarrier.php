@@ -129,16 +129,6 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $response = $pharmaoDeliveryJobInstance->getPrice($params);
         $result = $this->_rateResultFactory->create();
         
-        // Generate Log File
-        $logData = array(
-                        'weight_unit' => $this->model->getWeightUnit(),
-                        'weight' => $weight,
-                        'Sub' => $sub_total,
-                        'Total' => $total,
-                        'res' => print_r($response, true)
-                    );
-        $this->helper->generateLog('price-log', $logData);
-        
         /*store shipping in session*/
         if ($response && isset($response->code) && 200 == $response->code) {
             $limitationOfKms = $this->model->getConfigData('distance_range');
