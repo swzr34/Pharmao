@@ -128,9 +128,7 @@ define([
                             for (let i = 0; i < data.length; i++) {
                                 if(data[i].street3 != null) {
                                     street3 = data[i].street3;
-                                    console.log('The variable is undefined or null');
                                 } else {
-                                    console.log('The variable is not undefined or null');
                                     street3 = '';
                                 }
                               text += "<option value='" + data[i].street1 + "," + data[i].street2 + "," + data[i].street3 + "," + data[i].postcode + "," + data[i].city + "," + "France" + "'>" + data[i].street1 +" "+ data[i].street2 + " "+ street3 + ", " + data[i].postcode + " " + data[i].city + ", " + "France" + "</option>";
@@ -138,19 +136,14 @@ define([
                             text += "<option value='new'>Add New Address</option>";
                             $('#selectAddress').append( text );
                             $('.address_area').css('display','block');
-                            console.log(data);
-                            console.log(text);
                       },
                       error: function (request, status, error) {
                     
                     }
                 });
-                console.log('truee');
             }.bind(this)).fail(function () {
                 this.isPasswordVisible(true);
-                 //$('#selectAddress').css('display', 'none');
                  $('.address_area').css('display', 'none');
-                console.log('false');
                 checkoutData.setCheckedEmailValue(this.email());
             }.bind(this)).always(function () {
                 this.isLoading(false);
