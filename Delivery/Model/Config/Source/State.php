@@ -33,4 +33,3 @@ class State implements \Magento\Framework\Data\OptionSourceInterface
         return $stateArr;
     }
 }
-?>

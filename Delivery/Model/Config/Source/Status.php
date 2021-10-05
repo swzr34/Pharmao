@@ -17,4 +17,3 @@ class Status implements \Magento\Framework\Data\OptionSourceInterface
         return $this->orderStatusCollection->toOptionArray();
     }
 }
-?>

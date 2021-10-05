@@ -25,10 +25,4 @@ class Delivery extends AbstractModel
     public function getWeightUnit() {
         return $this->scopeConfig->getValue('general/locale/weight_unit', $this->storeScope);
     }
-    
-    public function getBaseUrl($url) {
-        return $this->getConfigData('base_url') . $url;
-    }
-
 }
-?>

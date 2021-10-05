@@ -9,4 +9,3 @@ class Job extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->_init('pharmao_job', 'id');
     }
 }
-?>

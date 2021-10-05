@@ -32,4 +32,3 @@ class Index extends \Magento\Framework\App\Action\Action
 		return $result->setData(['data' => json_encode($collection->getData())]);
 	}
 }
-?>

@@ -9,4 +9,3 @@ class Address extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->_init('pharmao_cache_addresses', 'id');
     }
 }
-?>

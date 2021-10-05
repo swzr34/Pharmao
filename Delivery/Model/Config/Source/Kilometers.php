@@ -20,4 +20,3 @@ class Kilometers implements \Magento\Framework\Data\OptionSourceInterface
   ];
  }
 }
-?>

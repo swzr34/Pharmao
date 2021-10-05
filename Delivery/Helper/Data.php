@@ -95,4 +95,16 @@ class Data extends AbstractHelper
         ]);
         return $pharmaoDelivery;
     }
+    
+    /**
+     * Get PharmaoDeliveryJobInstance
+     * @return  [description]
+     */
+    public function getJobMapUrl()
+    {
+        $base_url = ($this->model->getConfigData('environment', 'general'))
+                ? $this->environments['production'] : $this->environments['sandbox'];
+        return $base_url . 'job-map/';
+                
+    }
 }

@@ -9,4 +9,3 @@ class State extends \Magento\Framework\Model\AbstractModel
         $this->_init('Pharmao\Delivery\Model\ResourceModel\State');
     }
 }
-?>

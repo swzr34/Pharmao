@@ -17,4 +17,3 @@ class Checkbox
         return [['value' => '1', 'label'=>__('')]];
     }
 }
-?>

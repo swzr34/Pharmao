@@ -117,7 +117,6 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         }
         
         $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-        // $url = $this->model->getBaseUrl('/job/price');
         $params = array(
             'order_amount' => $total,
             'assignment_code' => $assignment_code,

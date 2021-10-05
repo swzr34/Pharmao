@@ -9,4 +9,3 @@ class State extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->_init('sales_order_status_state', 'status');
     }
 }
-?>
