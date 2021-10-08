@@ -191,7 +191,7 @@ abstract class AbstractService
     {
         $job = array(
             'job' => array(
-                'client_type' => 'M2',
+                'client_type' => 'magento',
                 'is_external' => 1,
                 'external_order_amount' => isset($data['order_amount']) ? $data['order_amount'] : '',
                 'assignment_code' => isset($data['assignment_code']) ? $data['assignment_code'] : '',

@@ -133,7 +133,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             $limitationOfKms = $this->model->getConfigData('distance_range');
             
             if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {
-
+                $shippingAmount = ($isWithinOneHour) ? $response->data->amount_within_one_hour : $response->data->amount;
                 $method = $this->_rateMethodFactory->create();
         
                 $method->setCarrier($this->_code);
@@ -144,8 +144,8 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         
                 $amount = $this->getShippingPrice();
         
-                $method->setPrice($response->data->amount);
-                $method->setCost($response->data->amount);
+                $method->setPrice($shippingAmount);
+                $method->setCost($shippingAmount);
         
                 $result->append($method);
                 
