@@ -4,13 +4,13 @@ namespace Pharmao\Delivery\Model\Carrier;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 
-class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
+class DropoffsDayCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
 {
     /**
      * @var string
      */
-    protected $_code = 'dropoffs';
+    protected $_code = 'dropoffsday';
 
     /**
      * @var \Magento\Shipping\Model\Rate\ResultFactory
@@ -88,13 +88,12 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
      */
     public function collectRates(RateRequest $request)
     {
-        $assignment_code = $this->helper->generateRandomNumber();
         $configDeliveryType = $this->model->getConfigData('delivery_type');
-        
-        if (!$this->getConfigFlag('active') || $configDeliveryType == 0) {
+        if (!$this->getConfigFlag('active') || $configDeliveryType == 1) {
             return false;
         }
         
+        $assignment_code = $this->helper->generateRandomNumber();
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
@@ -119,7 +118,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
         $params = array(
             'order_amount' => $total,
-            'is_within_one_hour' => 1,
+            'is_within_one_hour' => 0,
             'assignment_code' => $assignment_code,
             'order_id' => '',
             'customer_address' => $fullAddress
@@ -143,8 +142,8 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         
                 $amount = $this->getShippingPrice();
         
-                $method->setPrice($response->data->amount_within_one_hour);
-                $method->setCost($response->data->amount_within_one_hour);
+                $method->setPrice($response->data->amount);
+                $method->setCost($response->data->amount);
         
                 $result->append($method);
                 

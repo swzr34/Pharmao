@@ -13,6 +13,21 @@
                 <specificerrmsg>This shipping method is not available right now.</specificerrmsg>
                 <handling_type>F</handling_type>
             </dropoffs>
+            <dropoffsday>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <model>Pharmao\Delivery\Model\Carrier\DropoffsDayCarrier</model>
+                <name>Dropoffs Shipping Day</name>
+                <title>Dropoffs Shipping Day</title>
+                <price>10.00</price>
+                <specificerrmsg>This shipping method is not available right now.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </dropoffsday>
         </carriers>
+        <delivery_configuration>
+            <general>
+                <delivery_type>0</delivery_type>
+            </general>
+        </delivery_configuration>
     </default>
 </config>

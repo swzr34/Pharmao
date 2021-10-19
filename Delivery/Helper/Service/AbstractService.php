@@ -200,7 +200,7 @@ abstract class AbstractService
                 'package_type' => 'small',
                 'package_description' => '',
                 'comment' => 'this is a test comment',
-                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : 0,
+                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
                 'pickups' => array(
                     array(
                         'comment' => sprintf(

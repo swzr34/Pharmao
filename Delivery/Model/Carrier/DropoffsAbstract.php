@@ -4,13 +4,13 @@ namespace Pharmao\Delivery\Model\Carrier;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 
-class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
+class DropoffsAbstract extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
 {
     /**
      * @var string
      */
-    protected $_code = 'dropoffs';
+    protected $_code = 'dropoffsday';
 
     /**
      * @var \Magento\Shipping\Model\Rate\ResultFactory
@@ -88,13 +88,12 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
      */
     public function collectRates(RateRequest $request)
     {
-        $assignment_code = $this->helper->generateRandomNumber();
         $configDeliveryType = $this->model->getConfigData('delivery_type');
-        
-        if (!$this->getConfigFlag('active') || $configDeliveryType == 0) {
+        if (!$this->getConfigFlag('active') || $configDeliveryType == 1) {
             return false;
         }
-        
+        $allowedMethods = $this->getMethods();
+        $assignment_code = $this->helper->generateRandomNumber();
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
@@ -119,7 +118,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
         $params = array(
             'order_amount' => $total,
-            'is_within_one_hour' => 1,
+            'is_within_one_hour' => 0,
             'assignment_code' => $assignment_code,
             'order_id' => '',
             'customer_address' => $fullAddress
@@ -133,24 +132,40 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             $limitationOfKms = $this->model->getConfigData('distance_range');
             
             if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {
-                $method = $this->_rateMethodFactory->create();
-        
-                $method->setCarrier($this->_code);
-                $method->setCarrierTitle($this->getConfigData('title'));
-        
-                $method->setMethod($this->_code);
-                $method->setMethodTitle($this->getConfigData('name'));
-        
-                $amount = $this->getShippingPrice();
-        
-                $method->setPrice($response->data->amount_within_one_hour);
-                $method->setCost($response->data->amount_within_one_hour);
-        
-                $result->append($method);
+                foreach ($allowedMethods as $key) {
+                    $method = $this->_rateMethodFactory->create();
+            
+                    $method->setCarrier($key['code']);
+                    $method->setCarrierTitle($this->getConfigData('title'));
+            
+                    $method->setMethod($key['code']);
+                    $method->setMethodTitle($this->getConfigData('name'));
+            
+                    $amount = $this->getShippingPrice();
+            
+                    $method->setPrice($response->data->amount);
+                    $method->setCost($response->data->amount);
+            
+                    $result->append($method);
+                }
                 
                 return $result;
                 
             } 
         } 
+    }
+    
+    public function getMethods() {
+        $methods = array(
+        0 => array(
+            'code' => 'dropoffsday',
+            'value' => '0'
+        ),
+        1 => array(
+            'code' => 'dropoffs',
+            'value' => '1'
+        ),
+    );
+    return $methods;     
     }
 }
