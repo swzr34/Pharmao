@@ -26,7 +26,7 @@
                     <comment>Your Pharmao delivery API password.</comment>
                     <validate>required-entry</validate>
                 </field>
-                <field id="button_id" translate="label" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="button_id" translate="label" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>Pharmao\Delivery\Block\System\Config\Button</frontend_model>
                 </field>
                 <field id="access_token" translate="label" type="hidden" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">

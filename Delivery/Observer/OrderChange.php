@@ -65,7 +65,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                 $model->addData([
                     "order_id" => $order->getEntityId(),
                     "job_id" => $response->data->job_id,
-                    "website_id" => $order->getStore()->getWebsiteId(),
+                    "website_id" => $order->getStore()->getStoreId(),
                     "status" => $response->data->status,
                     "address" => $full_address,
                     "added" => date("Y-m-d H:i:s")

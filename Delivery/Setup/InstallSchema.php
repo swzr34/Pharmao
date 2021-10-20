@@ -101,7 +101,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface {
                                 ['nullbale'=>false]
                                 )
                             ->addColumn(
-                                'website_id',
+                                'store_id',
                                 Table::TYPE_INTEGER,
                                 '11',
                                 ['nullbale'=>false]
