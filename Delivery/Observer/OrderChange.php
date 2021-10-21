@@ -33,24 +33,26 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
         $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
         
-        if($configIsWithinOneHour == 2) {
-            if($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs" ) {
-                if($order->getShippingMethod() == "dropoffsday_dropoffsday") {
-                    $configIsWithinOneHour = 0;    
-                } else {
-                    $configIsWithinOneHour = 1;    
-                }
+        $configIsWithinOneHour = 0;
+        if ($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs" ) {
+            if ($order->getShippingMethod() == "dropoffsday_dropoffsday") {
+                $configIsWithinOneHour = 0;    
+            } else {
+                $configIsWithinOneHour = 1;    
             }
         }
         
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             
+            $storeId = $order->getStore()->getId(); 
+            $this->model->setStoreId($storeId);
+
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
 
             $response = $pharmaoDeliveryJobInstance->validateAndCreateJob(array(
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
-                'order_id' => $order->getEntityId(),
+                'order_id' => $order->getIncrementId(),
                 'is_within_one_hour' => $configIsWithinOneHour,
                 'customer_firstname' => $order->getCustomerFirstname(),
                 'customer_lastname' => $order->getCustomerLastname(),
