@@ -34,17 +34,16 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
         
         $configIsWithinOneHour = 0;
-        if ($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs" ) {
+        if ($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs") {
             if ($order->getShippingMethod() == "dropoffsday_dropoffsday") {
-                $configIsWithinOneHour = 0;    
+                $configIsWithinOneHour = 0;
             } else {
-                $configIsWithinOneHour = 1;    
+                $configIsWithinOneHour = 1;
             }
         }
         
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
-            
-            $storeId = $order->getStore()->getId(); 
+            $storeId = $order->getStore()->getId();
             $this->model->setStoreId($storeId);
 
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();

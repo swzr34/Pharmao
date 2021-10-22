@@ -43,8 +43,8 @@ abstract class AbstractService
      * Curl Cleint
      * @param array $params
      */
-    public function __construct($params) {
-        
+    public function __construct($params)
+    {
         $secret = $params['secret'];
         $username = $params['username'];
         $password = $params['password'];
@@ -55,7 +55,6 @@ abstract class AbstractService
         $this->country = $params['country'];
         
         if (empty($this->accessToken)) {
-            
             $data = array(
                 'secret' => $secret,
                 'username' => $username,
@@ -174,7 +173,8 @@ abstract class AbstractService
      * Get Country Name
      * @return string
      */
-    public function getCountryName() {
+    public function getCountryName()
+    {
         //$countryFactory = new CountryFactory();
 
         $country = $this->country->create()->loadByCode($this->config->getConfigData('pharmaocountry'));
