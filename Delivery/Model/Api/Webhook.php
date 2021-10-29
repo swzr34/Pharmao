@@ -10,7 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 class Webhook
 {
     protected $logger;
-    
+
     protected $_jobFactory;
 
     public function __construct(
@@ -20,8 +20,7 @@ class Webhook
         ScopeConfigInterface $scopeConfig,
         \Pharmao\Delivery\Model\JobFactory $jobFactory,
         \Pharmao\Delivery\Helper\Data $helper
-    )
-    {
+    ) {
 
         $this->logger = $logger;
         $this->order = $order;
@@ -32,8 +31,8 @@ class Webhook
     }
 
     /**
-    * @inheritdoc
-    */
+     * @inheritdoc
+     */
 
     public function getPost($data)
     {

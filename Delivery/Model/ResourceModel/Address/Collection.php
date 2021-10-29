@@ -2,8 +2,7 @@
 
 namespace Pharmao\Delivery\Model\ResourceModel\Address;
 
-class Collection
-    extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     protected function _construct()
     {

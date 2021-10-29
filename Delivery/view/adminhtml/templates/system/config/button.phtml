@@ -18,7 +18,7 @@ require([
           success: function( data ) {
             jQuery('#save').addClass('submit_config');
             var res = data;
-              
+
             if (res.data !== '') {
                 jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:green">API configure successfully.</span>'); 
             } else {
@@ -32,10 +32,10 @@ require([
         }
         });
     }
-    
+
     function callAjaxForGetState() {
         var status = jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val();
-        
+
         if(status != '') {
             jQuery.ajax({
                   url: "<?php echo $block->getControllerUrl('delivery/State/index') ?>",
@@ -54,23 +54,23 @@ require([
                   error: function (request, status, error) {
                     alert('error');
                 }
-            });    
+            });
         }
     }
- 
+
     jQuery('#validate_api').click(function () {
         callAjax();
     });
-    
+
     jQuery('#delivery_configuration_general_pharmao_delivery_active_status').change(function () {
         callAjaxForGetState();
     });
-    
+
     if(jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val() != '' && jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').val() != null) {
-        jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','contents');    
+        jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','contents');
     } else {
         jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').append('<option>Select order status State</option>'); 
-        jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','none'); 
+        jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','none');
     }
     jQuery('#row_delivery_configuration_general_access_token').css('display','none');
 

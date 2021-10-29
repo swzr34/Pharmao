@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace Pharmao\Delivery\Model\Config\Source;
+
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection as OrderStatusCollection;
 
 class Status implements \Magento\Framework\Data\OptionSourceInterface

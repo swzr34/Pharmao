@@ -48,7 +48,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
 
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
 
-            $response = $pharmaoDeliveryJobInstance->validateAndCreateJob(array(
+            $response = $pharmaoDeliveryJobInstance->validateAndCreateJob([
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
                 'order_id' => $order->getIncrementId(),
@@ -59,7 +59,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
                 'customer_address' => $full_address,
                 'customer_phone' => $order->getShippingAddress()->getTelephone(),
                 'customer_email' => $order->getCustomerEmail(),
-            ));
+            ]);
             
             if ($response && isset($response->code) && 200 == $response->code) {
                 $model = $this->_jobFactory->create();

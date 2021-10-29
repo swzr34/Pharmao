@@ -1,13 +1,14 @@
-<?php 
+<?php
 namespace Pharmao\Delivery\Setup;
 
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Ddl\Table;
 
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface {
+class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+{
 
-    public function install(SchemaSetupInterface $setup,ModuleContextInterface $context) 
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
         $conn = $setup->getConnection();
@@ -19,62 +20,62 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface {
                                 Table::TYPE_INTEGER,
                                 null,
                                 ['identity'=>true,'unsigned'=>true,'nullable'=>false,'primary'=>true]
-                                )
+                            )
                             ->addColumn(
                                 'customer_id',
                                 Table::TYPE_INTEGER,
                                 11,
                                 ['nullable'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'email',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'address_id',
                                 Table::TYPE_INTEGER,
                                 '11',
                                 ['nullbale'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'street1',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'street2',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'street3',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'city',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'postcode',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'country',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
-                            ->setOption('charset','utf8');
+                            )
+                            ->setOption('charset', 'utf8');
             $conn->createTable($table);
         }
 
@@ -87,43 +88,43 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface {
                                 Table::TYPE_INTEGER,
                                 null,
                                 ['identity'=>true,'unsigned'=>true,'nullable'=>false,'primary'=>true]
-                                )
+                            )
                             ->addColumn(
                                 'order_id',
                                 Table::TYPE_INTEGER,
                                 11,
                                 ['nullable'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'job_id',
                                 Table::TYPE_INTEGER,
                                 '11',
                                 ['nullbale'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'store_id',
                                 Table::TYPE_INTEGER,
                                 '11',
                                 ['nullbale'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'status',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false]
-                                )
+                            )
                             ->addColumn(
                                 'address',
                                 Table::TYPE_TEXT,
                                 '255',
                                 ['nullbale'=>false,'default'=>'']
-                                )
+                            )
                             ->addColumn(
                                 'added',
                                 Table::TYPE_TIMESTAMP,
                                 ['nullbale'=>false,'default'=>'']
-                                )
-                            ->setOption('charset','utf8');
+                            )
+                            ->setOption('charset', 'utf8');
             $conn->createTable($table_job);
         }
 

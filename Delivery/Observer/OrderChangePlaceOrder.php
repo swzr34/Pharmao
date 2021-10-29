@@ -42,19 +42,19 @@ class OrderChangePlaceOrder
         $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
         $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
         $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
-        if($configIsWithinOneHour == 2) {
-            if($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs" ) {
-                if($order->getShippingMethod() == "dropoffsday_dropoffsday") {
-                    $configIsWithinOneHour = 0;    
+        if ($configIsWithinOneHour == 2) {
+            if ($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs") {
+                if ($order->getShippingMethod() == "dropoffsday_dropoffsday") {
+                    $configIsWithinOneHour = 0;
                 } else {
-                    $configIsWithinOneHour = 1;    
+                    $configIsWithinOneHour = 1;
                 }
             }
         }
 
         if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-            $response = $pharmaoDeliveryJobInstance->validateAndCreateJob(array(
+            $response = $pharmaoDeliveryJobInstance->validateAndCreateJob([
                 'order_amount' => $order->getGrandTotal(),
                 'assignment_code' => $assignment_code,
                 'order_id' => $order->getEntityId(),
@@ -65,7 +65,7 @@ class OrderChangePlaceOrder
                 'customer_address' => $full_address,
                 'customer_phone' => $order->getShippingAddress()->getTelephone(),
                 'customer_email' => $order->getCustomerEmail(),
-            ));
+            ]);
 
             if ($response && isset($response->code) && 200 == $response->code) {
                 $model = $this->_jobFactory->create();

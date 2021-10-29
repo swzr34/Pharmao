@@ -33,9 +33,9 @@ abstract class AbstractService
     protected $version = 'v1';
 
     /**
-    * $baseUrl
-    * @var string
-    */
+     * $baseUrl
+     * @var string
+     */
     protected $baseUrl = '';
 
 
@@ -55,11 +55,11 @@ abstract class AbstractService
         $this->country = $params['country'];
         
         if (empty($this->accessToken)) {
-            $data = array(
+            $data = [
                 'secret' => $secret,
                 'username' => $username,
                 'password' => $password,
-            );
+            ];
             
             $tokenResponse = $this->post('/create-token', $data);
             
@@ -149,7 +149,7 @@ abstract class AbstractService
      */
     public function post($endpoint, $data)
     {
-        $this->setHeaders(array());
+        $this->setHeaders([]);
         $this->_curlClient->post($this->buildUrl($endpoint), json_encode($data));
 
         return $this->getResponseBody();
@@ -162,7 +162,7 @@ abstract class AbstractService
      */
     public function get($endpont)
     {
-        $this->setHeaders(array());
+        $this->setHeaders([]);
 
         $this->_curlClient->get($this->buildUrl($endpoint));
 
@@ -189,8 +189,8 @@ abstract class AbstractService
      */
     public function buildJobData($data)
     {
-        $job = array(
-            'job' => array(
+        $job = [
+            'job' => [
                 'client_type' => 'magento',
                 'is_external' => 1,
                 'external_order_amount' => isset($data['order_amount']) ? $data['order_amount'] : '',
@@ -201,8 +201,8 @@ abstract class AbstractService
                 'package_description' => '',
                 'comment' => 'this is a test comment',
                 'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
-                'pickups' => array(
-                    array(
+                'pickups' => [
+                    [
                         'comment' => sprintf(
                             'Rentrez dans la pharmacie, allez au comptoir et demander la commande Pharmao Nom: %s %s',
                             isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
@@ -215,28 +215,28 @@ abstract class AbstractService
                             $this->config->getConfigData('city', 'global_settings'),
                             $this->getCountryName()
                         ),
-                        'contact' => array(
+                        'contact' => [
                             'firstname' => $this->config->getConfigData('firstname', 'global_settings'),
                             'phone' => $this->config->getConfigData('phone', 'global_settings'),
                             'email' => $this->config->getConfigData('username', 'global_settings'),
                             "company" => $this->config->getConfigData('company_name', 'global_settings'),
-                        ),
-                    ),
-                ),
-                'dropoffs' => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'dropoffs' => [
+                    [
                         'comment' => isset($data['customer_comment']) ? $data['customer_comment'] : '',
                         'address' => $data['customer_address'],
-                        'contact' =>  array(
+                        'contact' =>  [
                             'firstname' => isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
                             'lastname' => isset($data['customer_lastname']) ? $data['customer_lastname'] : '',
                             'phone' => isset($data['customer_phone']) ? $data['customer_phone'] : '',
                             'email' => isset($data['customer_email']) ? $data['customer_email'] : '',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         return $job;
     }

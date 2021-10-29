@@ -21,11 +21,11 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
      * @var \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory
      */
     protected $_rateMethodFactory;
-    
+
     protected $scopeConfig;
-    
+
     protected $_cart;
-    
+
     protected $helper;
 
     /**
@@ -39,7 +39,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
      * @param array                                                       $data
      */
     public function __construct(
-        \Magento\Framework\Serialize\SerializerInterface $serializer, 
+        \Magento\Framework\Serialize\SerializerInterface $serializer,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Shipping\Model\Rate\ResultFactory $rateFactory,
         \Magento\Checkout\Model\Cart $cartModel,
@@ -90,67 +90,66 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
     {
         $assignment_code = $this->helper->generateRandomNumber();
         $configDeliveryType = $this->model->getConfigData('delivery_type');
-        
+
         if (!$this->getConfigFlag('active') || $configDeliveryType == 0) {
             return false;
         }
-        
+
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
         $fullAddress = $address . ", " . $postCode . " " . $city . ", " . $this->helper->getCountryName();
-        
+
         $items = $this->_cart->getQuote()->getAllItems();
         $sub_total = $this->_cart->getQuote()->getSubtotal();
         $total = $this->_cart->getQuote()->getGrandTotal();
 
         $weight = 0;
         foreach ($items as $item) {
-            $weight += ($item->getWeight() * $item->getQty()) ;        
+            $weight += ($item->getWeight() * $item->getQty()) ;
         }
-        
+
         $weight_limit = '';
         if ($this->model->getWeightUnit() == 'kgs') {
             $weight_limit = '10';
         } else {
             $weight_limit = '22.0462';
         }
-        
+
         $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-        $params = array(
+        $params = [
             'order_amount' => $total,
             'is_within_one_hour' => 1,
             'assignment_code' => $assignment_code,
             'order_id' => '',
             'customer_address' => $fullAddress
-        );
-        
+        ];
+
         $response = $pharmaoDeliveryJobInstance->getPrice($params);
         $result = $this->_rateResultFactory->create();
-        
+
         /*store shipping in session*/
         if ($response && isset($response->code) && 200 == $response->code) {
             $limitationOfKms = $this->model->getConfigData('distance_range');
-            
+
             if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {
                 $method = $this->_rateMethodFactory->create();
-        
+
                 $method->setCarrier($this->_code);
                 $method->setCarrierTitle($this->getConfigData('title'));
-        
+
                 $method->setMethod($this->_code);
                 $method->setMethodTitle($this->getConfigData('name'));
-        
+
                 $amount = $this->getShippingPrice();
-        
+
                 $method->setPrice($response->data->amount_within_one_hour);
                 $method->setCost($response->data->amount_within_one_hour);
-        
+
                 $result->append($method);
-                
+
                 return $result;
-                
-            } 
-        } 
+            }
+        }
     }
 }

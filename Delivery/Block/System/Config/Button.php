@@ -8,7 +8,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 class Button extends Field
 {
     protected $_template = 'Pharmao_Delivery::system/config/button.phtml';
-    
+
     public function __construct(Context $context, array $data = [])
     {
         parent::__construct($context, $data);
@@ -19,17 +19,17 @@ class Button extends Field
         $element->unsScope()->unsCanUseWebsiteValue()->unsCanUseDefaultValue();
         return parent::render($element);
     }
-    
+
     protected function _getElementHtml(AbstractElement $element)
     {
         return $this->_toHtml();
     }
-    
+
     public function getControllerUrl($url)
     {
         return $this->getUrl($url);
     }
-    
+
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')->setData(['id' => 'validate_api', 'label' => __('Validate API'),]);

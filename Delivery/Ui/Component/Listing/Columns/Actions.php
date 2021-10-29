@@ -50,7 +50,7 @@ class Actions extends Column
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getData('name');
             $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-            foreach ($dataSource['data']['items'] as & $item) { 
+            foreach ($dataSource['data']['items'] as & $item) {
                 $order_view_link = $this->urlBuilder->getUrl('sales/order/view/order_id/' . $item['order_id']);
                 $this->model->setStoreId($item['store_id']);
                 $job_link =  $this->helper->getJobMapUrl() . $item['job_id'];

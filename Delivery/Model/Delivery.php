@@ -10,8 +10,8 @@ class Delivery extends AbstractModel
     protected $storeScopeId = null;
 
     /**
-    * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    */
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {

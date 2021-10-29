@@ -44,8 +44,7 @@ class JobService extends AbstractService
        
         $validationResponse = $this->validateJob($params);
 
-        if (
-            $validationResponse
+        if ($validationResponse
             && isset($validationResponse->code)
             && 200 == $validationResponse->code
             && $validationResponse->data->is_valid
