@@ -1,5 +1,5 @@
 {
-  "name": "pharmao/delivery-magento2",
+  "name": "pharmao/delivery",
   "description": "Magento 2 Delivery Process",
   "type": "magento2-module",
   "version": "1.0.0",
