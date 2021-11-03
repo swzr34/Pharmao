@@ -14,7 +14,6 @@ class Data extends AbstractHelper
      * @var array
      */
     protected $environments = [
-        //'sandbox' => 'http://delivery.loc/',
         'sandbox' => 'https://delivery-sandbox.pharmao.fr/',
         'production' => 'https://pharmao-delivery-live.pharmao.fr/',
     ];
@@ -32,16 +31,6 @@ class Data extends AbstractHelper
         $this->model = $deliveryModel;
         $this->_countryFactory = $countryFactory;
     }
-    
-    public function generateLog($logFileName, $data)
-    {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/' . $logFileName . '.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        foreach ($data as $key => $value) {
-            $logger->info($key . ' : ' . $value);
-        }
-    }
        
     public function performPost($url, $data)
     {
@@ -57,7 +46,7 @@ class Data extends AbstractHelper
    
     public function generateRandomNumber()
     {
-        return random_int(1000000000, 9999999999);
+        return md5(microtime(true).mt_Rand());
     }
    
     public function getFullAddress($shippingAddress)
@@ -65,9 +54,9 @@ class Data extends AbstractHelper
         $street_data = $shippingAddress->getStreet();
         $street_0 = isset($street_data[0]) ? $street_data[0] : '';
         $street_1 = isset($street_data[1]) ? $street_data[1] : '';
-        $postCode = $shippingAddress->getPostCode();
+        $post_code = $shippingAddress->getPostCode();
         $city = $shippingAddress->getCity();
-        $full_address = $street_0 . " " . $street_1 . ", " . $postCode . " " . $city . ", " . $this->getCountryName();
+        $full_address = $street_0 . " " . $street_1 . ", " . $post_code . " " . $city . ", " . $this->getCountryName();
         return ['full_address' => $full_address, 'street_1' => $street_1];
     }
    

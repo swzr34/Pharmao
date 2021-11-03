@@ -199,7 +199,6 @@ abstract class AbstractService
                 'transport_type' => 'Bike',
                 'package_type' => 'small',
                 'package_description' => '',
-                'comment' => 'this is a test comment',
                 'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
                 'pickups' => [
                     [
