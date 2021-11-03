@@ -27,7 +27,7 @@ class Webhook
         $this->_curl = $curl;
         $this->scopeConfig = $scopeConfig;
         $this->_jobFactory = $jobFactory;
-         $this->helper = $helper;
+        $this->helper = $helper;
     }
 
     /**
@@ -36,17 +36,12 @@ class Webhook
 
     public function getPost($data)
     {
-
         $model = $this->_jobFactory->create();
         $collection = $model->getCollection()->addFieldToFilter('job_id', trim($data['id']));
-        $job_id = $data['id'];
-        $status = $data['status'];
         $jobData = $collection->getData();
-        $returnArray = json_encode($data);
         if (!empty($jobData)) {
-            $address = $jobData[0]['address'];
             $jobUpdate = $model->load($jobData[0]['id']);
-            $jobUpdate->setStatus($status);
+            $jobUpdate->setStatus($data['status']);
             $jobUpdate->setAdded(date("Y-m-d H:i:s"));
             $saveData = $jobUpdate->save();
         }

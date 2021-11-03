@@ -4,6 +4,10 @@ namespace Pharmao\Delivery\Observer;
 
 class OrderChangePlaceOrder
 {
+    protected $_within_hour_code = 'dropoffs_dropoffs';
+    
+    protected $_within_day_code = 'dropoffsday_dropoffsday';
+    
     protected $scopeConfig;
 
     protected $_jobFactory;
@@ -36,52 +40,60 @@ class OrderChangePlaceOrder
         $order
     ) {
         $orderId = $order->getId();
-        $assignment_code = $this->helper->generateRandomNumber();
-        $address_data = $this->helper->getFullAddress($order->getShippingAddress());
-        $full_address = $address_data['full_address'];
-        $config_status = $this->model->getConfigData('pharmao_delivery_active_status');
-        $config_state = $this->model->getConfigData('pharmao_delivery_active_stat');
-        $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
-        if ($configIsWithinOneHour == 2) {
-            if ($order->getShippingMethod() == "dropoffsday_dropoffsday" || $order->getShippingMethod() == "dropoffs_dropoffs") {
-                if ($order->getShippingMethod() == "dropoffsday_dropoffsday") {
-                    $configIsWithinOneHour = 0;
-                } else {
-                    $configIsWithinOneHour = 1;
+        
+        if($order->getShippingAddress() != null || $order->getShippingAddress() != '') {
+            $assignmentCode = $this->helper->generateRandomNumber();
+            $addressData = $this->helper->getFullAddress($order->getShippingAddress());
+            $fullAddress = $addressData['full_address'];
+            $configStatus = $this->model->getConfigData('pharmao_delivery_active_status');
+            $configState = $this->model->getConfigData('pharmao_delivery_active_stat');
+            $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
+            $isPharmaoOrder = false;
+            
+            if ($configIsWithinOneHour == 2) {
+                if ($order->getShippingMethod() == $this->_within_day_code || $order->getShippingMethod() == $this->_within_hour_code) {
+                    $isPharmaoOrder = true;
+                    if ($order->getShippingMethod() == $this->_within_day_code) {
+                        $configIsWithinOneHour = 0;
+                    } else {
+                        $configIsWithinOneHour = 1;
+                    }
+                }
+            }
+    
+            if ($isPharmaoOrder) {    
+                if ($order->getStatus() == $configStatus && $order->getState() == $configState) {
+                    $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
+                    
+                    $response = $pharmaoDeliveryJobInstance->validateAndCreateJob([
+                        'order_amount' => $order->getGrandTotal(),
+                        'assignment_code' => $assignmentCode,
+                        'order_id' => $order->getEntityId(),
+                        'is_within_one_hour' => $configIsWithinOneHour,
+                        'customer_firstname' => $order->getCustomerFirstname(),
+                        'customer_lastname' => $order->getCustomerLastname(),
+                        'customer_comment' => $addressData['street_1'],
+                        'customer_address' => $fullAddress,
+                        'customer_phone' => $order->getShippingAddress()->getTelephone(),
+                        'customer_email' => $order->getCustomerEmail(),
+                    ]);
+        
+                    if ($response && isset($response->code) && 200 == $response->code) {
+                        $model = $this->_jobFactory->create();
+                        $model->addData([
+                            "order_id" => $order->getEntityId(),
+                            "job_id" => $response->data->job_id,
+                            "store_id" => $order->getStore()->getStoreId(),
+                            "status" => $response->data->status,
+                            "address" => $fullAddress,
+                            "added" => date("Y-m-d H:i:s")
+                        ]);
+        
+                        $saveData = $model->save();
+                    }
                 }
             }
         }
-
-        if ($order->getStatus() == $config_status && $order->getState() == $config_state) {
-            $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-            $response = $pharmaoDeliveryJobInstance->validateAndCreateJob([
-                'order_amount' => $order->getGrandTotal(),
-                'assignment_code' => $assignment_code,
-                'order_id' => $order->getEntityId(),
-                'is_within_one_hour' => $configIsWithinOneHour,
-                'customer_firstname' => $order->getCustomerFirstname(),
-                'customer_lastname' => $order->getCustomerLastname(),
-                'customer_comment' => $address_data['street_1'],
-                'customer_address' => $full_address,
-                'customer_phone' => $order->getShippingAddress()->getTelephone(),
-                'customer_email' => $order->getCustomerEmail(),
-            ]);
-
-            if ($response && isset($response->code) && 200 == $response->code) {
-                $model = $this->_jobFactory->create();
-                $model->addData([
-                    "order_id" => $order->getEntityId(),
-                    "job_id" => $response->data->job_id,
-                    "website_id" => $order->getStore()->getStoreId(),
-                    "status" => $response->data->status,
-                    "address" => $full_address,
-                    "added" => date("Y-m-d H:i:s")
-                ]);
-
-                $saveData = $model->save();
-            }
-        }
-
         return $order;
     }
 }
