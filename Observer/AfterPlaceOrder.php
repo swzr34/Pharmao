@@ -21,7 +21,7 @@ class AfterPlaceOrder implements ObserverInterface
     {
         $order = $observer->getEvent()->getOrder();
        
-        if ($order->getShippingAddress() != null || $order->getShippingAddress() != '') {
+        if ($order->getShippingAddress()) {
             $shippingAddress = $order->getShippingAddress();
             $customerAddressId = ($order->getShippingAddress()) ? $shippingAddress->getCustomerAddressId() : 0;
             $customerId = 0;

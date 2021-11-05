@@ -41,7 +41,7 @@ class OrderChangePlaceOrder
     ) {
         $orderId = $order->getId();
         
-        if($order->getShippingAddress() != null || $order->getShippingAddress() != '') {
+        if ($order->getShippingAddress()) {
             $assignmentCode = $this->helper->generateRandomNumber();
             $addressData = $this->helper->getFullAddress($order->getShippingAddress());
             $fullAddress = $addressData['full_address'];
