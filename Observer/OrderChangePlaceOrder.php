@@ -63,6 +63,9 @@ class OrderChangePlaceOrder
     
             if ($isPharmaoOrder) {    
                 if ($order->getStatus() == $configStatus && $order->getState() == $configState) {
+                    $storeId = $order->getStore()->getId();
+                    $this->model->setStoreId($storeId);
+    
                     $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
                     
                     $response = $pharmaoDeliveryJobInstance->validateAndCreateJob([

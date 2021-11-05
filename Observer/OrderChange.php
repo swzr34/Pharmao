@@ -31,8 +31,6 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $assignmentCode = $this->helper->generateRandomNumber();
         $order = $observer->getEvent()->getOrder();
         
-        $addressData = $this->helper->getFullAddress($order->getShippingAddress());
-        $fullAddress = $addressData['full_address'];
         $configStatus = $this->model->getConfigData('pharmao_delivery_active_status');
         $configState = $this->model->getConfigData('pharmao_delivery_active_stat');
         $configIsWithinOneHour = $this->model->getConfigData('delivery_type');
@@ -50,6 +48,9 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         
         if ($isPharmaoOrder) {
             if ($order->getStatus() == $configStatus && $order->getState() == $configState) {
+                $addressData = $this->helper->getFullAddress($order->getShippingAddress());
+                $fullAddress = $addressData['full_address'];
+        
                 $storeId = $order->getStore()->getId();
                 $this->model->setStoreId($storeId);
     
