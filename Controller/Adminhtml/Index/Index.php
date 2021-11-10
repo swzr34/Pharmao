@@ -21,13 +21,11 @@ class Index extends \Magento\Backend\App\Action
     public function __construct(
         Context $context,
         PageFactory $pageFactory,
-        \Magento\Framework\HTTP\Client\Curl $curl,
         \Pharmao\Delivery\Model\Delivery $deliveryModel,
         \Pharmao\Delivery\Helper\Data $helper,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
     ) {
         $this->resultPageFactory = $pageFactory;
-        $this->_curl = $curl;
         $this->model = $deliveryModel;
         $this->helper = $helper;
         $this->resultJsonFactory = $resultJsonFactory;

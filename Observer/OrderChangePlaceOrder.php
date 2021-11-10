@@ -15,14 +15,12 @@ class OrderChangePlaceOrder
     protected $_storeManager;
 
     public function __construct(
-        \Magento\Framework\HTTP\Client\Curl $curl,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Pharmao\Delivery\Model\JobFactory $jobFactory,
         \Pharmao\Delivery\Model\Delivery $deliveryModel,
         \Pharmao\Delivery\Helper\Data $helper,
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        $this->_curl = $curl;
         $this->scopeConfig = $scopeConfig;
         $this->_jobFactory = $jobFactory;
         $this->model = $deliveryModel;
@@ -40,6 +38,11 @@ class OrderChangePlaceOrder
         $order
     ) {
         $orderId = $order->getId();
+        $storeId = $order->getStore()->getId();
+        $this->model->setStoreId($storeId);
+        if (!$this->model->isEnabled()) {
+            return false;
+        }
         
         if ($order->getShippingAddress()) {
             $assignmentCode = $this->helper->generateRandomNumber();
@@ -63,8 +66,6 @@ class OrderChangePlaceOrder
     
             if ($isPharmaoOrder) {    
                 if ($order->getStatus() == $configStatus && $order->getState() == $configState) {
-                    $storeId = $order->getStore()->getId();
-                    $this->model->setStoreId($storeId);
     
                     $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
                     

@@ -89,7 +89,7 @@ class DropoffsDayCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier
     public function collectRates(RateRequest $request)
     {
         $configDeliveryType = $this->model->getConfigData('delivery_type');
-        if (!$this->getConfigFlag('active') || $configDeliveryType == 1) {
+        if (!$this->model->isEnabled() || !$this->getConfigFlag('active') || $configDeliveryType == 1) {
             return false;
         }
 
@@ -123,8 +123,11 @@ class DropoffsDayCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier
             'order_id' => '',
             'customer_address' => $fullAddress
         ];
-
-        $response = $pharmaoDeliveryJobInstance->getPrice($params);
+        
+        $response = '';    
+        if ($pharmaoDeliveryJobInstance->getAccessToken()) {
+            $response = $pharmaoDeliveryJobInstance->getPrice($params);
+        }
         $result = $this->_rateResultFactory->create();
 
         /*store shipping in session*/

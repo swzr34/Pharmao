@@ -34,4 +34,9 @@ class Delivery extends AbstractModel
     {
         $this->storeScopeId = $storeId;
     }
+    
+    public function isEnabled()
+    {
+        return $this->getConfigData('enable');
+    }
 }

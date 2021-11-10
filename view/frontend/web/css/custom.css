@@ -1,7 +1,12 @@
-div[name="shippingAddress.region_id"], div[name="shippingAddress.firstname"], div[name="shippingAddress.lastname"], div[name="shippingAddress.telephone"], div[name="shippingAddress.company"], div[name="shippingAddress.country_id"], div[name="shippingAddress.custom_attributes.address_finder"], div[name="shippingAddress.city"], div[name="shippingAddress.postcode"] {
+.shipping-address-items div[name="shippingAddress.region_id"], .shipping-address-items div[name="shippingAddress.firstname"], .shipping-address-items div[name="shippingAddress.lastname"], .shipping-address-items div[name="shippingAddress.telephone"], .shipping-address-items div[name="shippingAddress.company"], .shipping-address-items div[name="shippingAddress.country_id"], .shipping-address-items div[name="shippingAddress.custom_attributes.address_finder"], .shipping-address-items div[name="shippingAddress.city"], .shipping-address-items div[name="shippingAddress.postcode"] {
   display: none;
 }
-.street {display: none;}
+.shipping-address-items .street {display: none;}
+
+.not-logged-in div[name="shippingAddress.region_id"], .not-logged-in div[name="shippingAddress.firstname"], .not-logged-in div[name="shippingAddress.lastname"], .not-logged-in div[name="shippingAddress.telephone"], .not-logged-in div[name="shippingAddress.company"], .not-logged-in div[name="shippingAddress.country_id"], .not-logged-in div[name="shippingAddress.custom_attributes.address_finder"], .not-logged-in div[name="shippingAddress.city"], .not-logged-in div[name="shippingAddress.postcode"] {
+  display: none;
+}
+.not-logged-in .street {display: none;}
 
 .modal-inner-wrap div[name="shippingAddress.firstname"], .modal-inner-wrap div[name="shippingAddress.lastname"], .modal-inner-wrap div[name="shippingAddress.telephone"], .modal-inner-wrap div[name="shippingAddress.company"], .modal-inner-wrap div[name="shippingAddress.country_id"], .modal-inner-wrap div[name="shippingAddress.custom_attributes.address_finder"], .modal-inner-wrap div[name="shippingAddress.city"], .modal-inner-wrap div[name="shippingAddress.postcode"] {
     display: block;

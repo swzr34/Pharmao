@@ -19,29 +19,14 @@ class Data extends AbstractHelper
     ];
     
     /**
-     * @param \Magento\Framework\HTTP\Client\Curl       $curl
      * @param \Pharmao\Delivery\Model\Delivery          $deliveryModel
      */
     public function __construct(
-        \Magento\Framework\HTTP\Client\Curl $curl,
         \Pharmao\Delivery\Model\Delivery $deliveryModel,
         \Magento\Directory\Model\CountryFactory $countryFactory
     ) {
-        $this->_curl = $curl;
         $this->model = $deliveryModel;
         $this->_countryFactory = $countryFactory;
-    }
-       
-    public function performPost($url, $data)
-    {
-        $access_token = "Bearer " . $this->model->getConfigData('access_token');
-        if ($url != $this->model->getConfigData('base_url') . '/job/price' && $url != $this->model->getConfigData('base_url') . '/create-token') {
-            $headers = ["Content-Type" => "application/json", "Authorization" => $access_token];
-            $this->_curl->setHeaders($headers);
-        }
-        $this->_curl->post($url, $data);
-        $response = $this->_curl->getBody();
-        return json_decode($response);
     }
    
     public function generateRandomNumber()

@@ -134,8 +134,10 @@ define([
                               text += "<option value='" + data[i].street1 + "," + data[i].street2 + "," + data[i].street3 + "," + data[i].postcode + "," + data[i].city + "," + "France" + "'>" + data[i].street1 +" "+ data[i].street2 + " "+ street3 + ", " + data[i].postcode + " " + data[i].city + ", " + "France" + "</option>";
                             }
                             text += "<option value='new'>Add New Address</option>";
-                            $('#selectAddress').append( text );
-                            $('.address_area').css('display','block');
+                            if(isenabled != 0) {
+                                $('#selectAddress').append( text );    
+                                $('.address_area').css('display','block');
+                            }
                       },
                       error: function (request, status, error) {
                     

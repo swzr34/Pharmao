@@ -91,7 +91,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $assignment_code = $this->helper->generateRandomNumber();
         $configDeliveryType = $this->model->getConfigData('delivery_type');
 
-        if (!$this->getConfigFlag('active') || $configDeliveryType == 0) {
+        if (!$this->model->isEnabled() || !$this->getConfigFlag('active') || $configDeliveryType == 0) {
             return false;
         }
 
@@ -125,7 +125,10 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             'customer_address' => $fullAddress
         ];
 
-        $response = $pharmaoDeliveryJobInstance->getPrice($params);
+        $response = '';    
+        if ($pharmaoDeliveryJobInstance->getAccessToken()) {
+            $response = $pharmaoDeliveryJobInstance->getPrice($params);
+        }
         $result = $this->_rateResultFactory->create();
 
         /*store shipping in session*/

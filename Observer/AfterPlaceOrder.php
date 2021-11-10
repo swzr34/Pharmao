@@ -11,14 +11,19 @@ class AfterPlaceOrder implements ObserverInterface
 
     public function __construct(
         \Pharmao\Delivery\Model\AddressFactory $addressFactory,
+        \Pharmao\Delivery\Model\Delivery $deliveryModel,
         \Pharmao\Delivery\Helper\Data $helper
     ) {
         $this->_addressFactory = $addressFactory;
+        $this->model = $deliveryModel;
         $this->helper = $helper;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
+        if (!$this->model->isEnabled()) {
+            return false;
+        }
         $order = $observer->getEvent()->getOrder();
        
         if ($order->getShippingAddress()) {

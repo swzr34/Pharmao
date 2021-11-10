@@ -11,22 +11,26 @@
             <resource>Pharmao_Delivery::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Pharmao Delivery API</label>
-                <field id="username" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="enable" translate="label" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                  <label>Enable</label>
+                  <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Your API Username</label>
                     <comment>Your Pharmao delivery API username.</comment>
                     <validate>required-entry</validate>
                 </field>
-                <field id="api_key" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_key" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Your API Secret</label>
                     <comment>Your Pharmao delivery API secret.</comment>
                     <validate>required-entry</validate>
                 </field>
-                <field id="password" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="password" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Your API Password</label>
                     <comment>Your Pharmao delivery API password.</comment>
                     <validate>required-entry</validate>
                 </field>
-                <field id="button_id" translate="label" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="button_id" translate="label" type="button" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>Pharmao\Delivery\Block\System\Config\Button</frontend_model>
                 </field>
                 <field id="access_token" translate="label" type="hidden" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">

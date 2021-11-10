@@ -13,13 +13,11 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
     protected $_storeManager;
 
     public function __construct(
-        \Magento\Framework\HTTP\Client\Curl $curl,
         \Pharmao\Delivery\Model\JobFactory $jobFactory,
         \Pharmao\Delivery\Model\Delivery $deliveryModel,
         \Pharmao\Delivery\Helper\Data $helper,
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        $this->_curl = $curl;
         $this->_jobFactory = $jobFactory;
         $this->model = $deliveryModel;
         $this->helper = $helper;
@@ -28,8 +26,15 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $assignmentCode = $this->helper->generateRandomNumber();
         $order = $observer->getEvent()->getOrder();
+        $storeId = $order->getStore()->getId();
+        $this->model->setStoreId($storeId);
+        
+        if (!$this->model->isEnabled()) {
+            return false;
+        }
+        
+        $assignmentCode = $this->helper->generateRandomNumber();
         
         $configStatus = $this->model->getConfigData('pharmao_delivery_active_status');
         $configState = $this->model->getConfigData('pharmao_delivery_active_stat');
@@ -50,9 +55,6 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
             if ($order->getStatus() == $configStatus && $order->getState() == $configState) {
                 $addressData = $this->helper->getFullAddress($order->getShippingAddress());
                 $fullAddress = $addressData['full_address'];
-        
-                $storeId = $order->getStore()->getId();
-                $this->model->setStoreId($storeId);
     
                 $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
                 

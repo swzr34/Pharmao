@@ -4,7 +4,6 @@ namespace Pharmao\Delivery\Model\Api;
 
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Model\Order;
-use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Webhook
@@ -16,7 +15,6 @@ class Webhook
     public function __construct(
         LoggerInterface $logger,
         Order $order,
-        Curl $curl,
         ScopeConfigInterface $scopeConfig,
         \Pharmao\Delivery\Model\JobFactory $jobFactory,
         \Pharmao\Delivery\Helper\Data $helper
@@ -24,7 +22,6 @@ class Webhook
 
         $this->logger = $logger;
         $this->order = $order;
-        $this->_curl = $curl;
         $this->scopeConfig = $scopeConfig;
         $this->_jobFactory = $jobFactory;
         $this->helper = $helper;
