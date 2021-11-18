@@ -150,6 +150,8 @@ abstract class AbstractService
     public function post($endpoint, $data)
     {
         $this->setHeaders([]);
+        $this->_curlClient->setOption(CURLOPT_SSL_VERIFYHOST,false);
+        $this->_curlClient->setOption(CURLOPT_SSL_VERIFYPEER,false);
         $this->_curlClient->post($this->buildUrl($endpoint), json_encode($data));
 
         return $this->getResponseBody();

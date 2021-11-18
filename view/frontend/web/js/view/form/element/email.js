@@ -134,7 +134,7 @@ define([
                               text += "<option value='" + data[i].street1 + "," + data[i].street2 + "," + data[i].street3 + "," + data[i].postcode + "," + data[i].city + "," + "France" + "'>" + data[i].street1 +" "+ data[i].street2 + " "+ street3 + ", " + data[i].postcode + " " + data[i].city + ", " + "France" + "</option>";
                             }
                             text += "<option value='new'>Add New Address</option>";
-                            if(isenabled != 0) {
+                            if(isenabled != 0 && checkDomain == 1) {
                                 $('#selectAddress').append( text );    
                                 $('.address_area').css('display','block');
                             }

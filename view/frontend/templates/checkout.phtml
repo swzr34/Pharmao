@@ -4,6 +4,7 @@ $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface'
 $url = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
 $customerSession = $objectManager->get('Magento\Customer\Model\Session');
 $isenabled = $objectManager->get('Pharmao\Delivery\Model\Delivery')->isEnabled();
+$checkDomain = $this->helper('Pharmao\Delivery\Helper\Data')->checkDomain();
 $class = '';
 if($customerSession->isLoggedIn()) {
    $class = 'logged-in';
@@ -14,6 +15,7 @@ if($customerSession->isLoggedIn()) {
 <script type="text/javascript">
     var site_url = "<?php echo $url; ?>";
     var isenabled = "<?php echo $isenabled; ?>";
+    var checkDomain = "<?php echo $checkDomain; ?>";
     require(['jquery'],function($){
     jQuery( document ).ready(function() {
     var cls = "<?php echo $class; ?>";

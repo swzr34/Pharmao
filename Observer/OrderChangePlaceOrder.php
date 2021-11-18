@@ -37,7 +37,7 @@ class OrderChangePlaceOrder
         \Magento\Sales\Api\OrderManagementInterface $orderManagementInterface,
         $order
     ) {
-        if ($this->model->isEnabled()) {
+        if ($this->model->isEnabled() && $this->helper->checkDomain() == true) {
             $orderId = $order->getId();
             $storeId = $order->getStore()->getId();
             $this->model->setStoreId($storeId);

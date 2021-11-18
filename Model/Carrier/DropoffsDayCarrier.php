@@ -89,7 +89,7 @@ class DropoffsDayCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier
     public function collectRates(RateRequest $request)
     {
         $configDeliveryType = $this->model->getConfigData('delivery_type');
-        if (!$this->model->isEnabled() || !$this->getConfigFlag('active') || $configDeliveryType == 1) {
+        if (!$this->model->isEnabled() || !$this->getConfigFlag('active') || $configDeliveryType == 1 || $this->helper->checkDomain() == false) {
             return false;
         }
 

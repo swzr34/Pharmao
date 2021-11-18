@@ -30,7 +30,7 @@ class OrderChange implements \Magento\Framework\Event\ObserverInterface
         $storeId = $order->getStore()->getId();
         $this->model->setStoreId($storeId);
         
-        if (!$this->model->isEnabled()) {
+        if (!$this->model->isEnabled() || $this->helper->checkDomain() == false) {
             return false;
         }
         

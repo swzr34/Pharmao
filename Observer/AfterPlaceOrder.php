@@ -21,7 +21,7 @@ class AfterPlaceOrder implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->model->isEnabled()) {
+        if (!$this->model->isEnabled() || $this->helper->checkDomain() == false) {
             return false;
         }
         $order = $observer->getEvent()->getOrder();
