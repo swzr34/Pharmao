@@ -92,14 +92,14 @@ class Data extends AbstractHelper
     public function checkDomain()
     {
         $base_url = ($this->model->getConfigData('environment', 'general'))
-                ? $this->environments['production'] : $this->environments['sandbox'];
-        
+            ? $this->environments['production'] : $this->environments['sandbox'];
+
         $result = false;
         $url = filter_var($base_url, FILTER_VALIDATE_URL);
-        
+
         /* Open curl connection */
         $handle = curl_init($url);
-        
+
         /* Set curl parameter */
         curl_setopt_array($handle, array(
             CURLOPT_FOLLOWLOCATION => TRUE,     // we need the last redirected url
@@ -109,20 +109,16 @@ class Data extends AbstractHelper
             CURLOPT_SSL_VERIFYHOST => FALSE,    // we don't need verify host
             CURLOPT_SSL_VERIFYPEER => FALSE     // we don't need verify peer
         ));
-    
+
         /* Get the HTML or whatever is linked in $url. */
         $response = curl_exec($handle);
-        
-        $httpCode = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);  // Try to get the last url
+
+        //$httpCode = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);  // Try to get the last url
         $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);      // Get http status from last url
-        
-        /* Check for 200 (file is found). */
-        if($httpCode == 200) {
-            $result = true;
-        }
-        
+
         /* Close curl connection */
         curl_close($handle);
-        return $result;
+
+        return (200 === $httpCode);
     }
 }
