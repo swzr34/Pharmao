@@ -39,11 +39,13 @@ class Index extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-        if ($pharmaoDeliveryJobInstance->getAccessToken() != null) {
-            /** @var \Magento\Framework\Controller\Result\Json $result */
-            $result = $this->resultJsonFactory->create();
-            return $result->setData(['data' => 'Success']);
+        if ($this->helper->checkDomain()) {
+            $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
+            if ($pharmaoDeliveryJobInstance->getAccessToken() != null) {
+                /** @var \Magento\Framework\Controller\Result\Json $result */
+                $result = $this->resultJsonFactory->create();
+                return $result->setData(['data' => 'Success']);
+            }
         }
     }
 }
