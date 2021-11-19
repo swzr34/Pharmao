@@ -246,11 +246,8 @@ abstract class AbstractService
      */
     public function checkDomain()
     {
-        $base_url = ($this->config->getConfigData('environment', 'general'))
-            ? $this->environments['production'] : $this->environments['sandbox'];
-
         $result = false;
-        $url = filter_var($base_url, FILTER_VALIDATE_URL);
+        $url = filter_var($this->baseUrl, FILTER_VALIDATE_URL);
 
         /* Open curl connection */
         $handle = curl_init($url);
