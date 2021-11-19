@@ -246,7 +246,7 @@ abstract class AbstractService
      */
     public function checkDomain()
     {
-        $base_url = ($this->model->getConfigData('environment', 'general'))
+        $base_url = ($this->config->getConfigData('environment', 'general'))
             ? $this->environments['production'] : $this->environments['sandbox'];
 
         $result = false;
