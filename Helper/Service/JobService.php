@@ -14,6 +14,10 @@ class JobService extends AbstractService
      */
     public function validateJob($data)
     {
+        if (!$this->checkDomain()) {
+            return false;
+        }
+
         $body = $this->post('/job/validate', $data);
 
         return $body;
@@ -26,6 +30,10 @@ class JobService extends AbstractService
      */
     public function createJob($data)
     {
+        if (!$this->checkDomain()) {
+            return false;
+        }
+
         $params = $this->buildJobData($data);
 
         $body = $this->post('/jobs', $params);
@@ -63,6 +71,10 @@ class JobService extends AbstractService
      */
     public function getPrice($data)
     {
+        if (!$this->checkDomain()) {
+            return false;
+        }
+
         $params = $this->buildJobData($data);
 
         $body = $this->post('/job/price', $params);

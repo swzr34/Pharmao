@@ -93,7 +93,6 @@ class DropoffsDayCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier
         if (!$this->model->isEnabled()
             || !$this->getConfigFlag('active')
             || $configDeliveryType == 1
-            || !$this->helper->checkDomain()
         ) {
             return false;
         }

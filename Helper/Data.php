@@ -84,41 +84,4 @@ class Data extends AbstractHelper
                 ? $this->environments['production'] : $this->environments['sandbox'];
         return $base_url . 'job-map/';
     }
-    
-    /**
-     * Check Domain
-     * @return  [boolean]
-     */
-    public function checkDomain()
-    {
-        $base_url = ($this->model->getConfigData('environment', 'general'))
-            ? $this->environments['production'] : $this->environments['sandbox'];
-
-        $result = false;
-        $url = filter_var($base_url, FILTER_VALIDATE_URL);
-
-        /* Open curl connection */
-        $handle = curl_init($url);
-
-        /* Set curl parameter */
-        curl_setopt_array($handle, array(
-            CURLOPT_FOLLOWLOCATION => TRUE,     // we need the last redirected url
-            CURLOPT_NOBODY => TRUE,             // we don't need body
-            CURLOPT_HEADER => FALSE,            // we don't need headers
-            CURLOPT_RETURNTRANSFER => FALSE,    // we don't need return transfer
-            CURLOPT_SSL_VERIFYHOST => FALSE,    // we don't need verify host
-            CURLOPT_SSL_VERIFYPEER => FALSE     // we don't need verify peer
-        ));
-
-        /* Get the HTML or whatever is linked in $url. */
-        $response = curl_exec($handle);
-
-        //$httpCode = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);  // Try to get the last url
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);      // Get http status from last url
-
-        /* Close curl connection */
-        curl_close($handle);
-
-        return (200 === $httpCode);
-    }
 }
