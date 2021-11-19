@@ -246,8 +246,9 @@ abstract class AbstractService
      */
     public function checkDomain()
     {
+        $baseUrl = str_replace('/v1', '', $this->baseUrl);
         $result = false;
-        $url = filter_var($this->baseUrl, FILTER_VALIDATE_URL);
+        $url = filter_var($baseUrl, FILTER_VALIDATE_URL);
 
         /* Open curl connection */
         $handle = curl_init($url);
