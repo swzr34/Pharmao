@@ -1,49 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Controller\Adminhtml\Index;
 
-use \Magento\Backend\App\Action\Context;
-use \Magento\Framework\View\Result\PageFactory;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Pharmao\Delivery\Helper\Data;
+use Pharmao\Delivery\Helper\Service\JobService;
 
-class Index extends \Magento\Backend\App\Action
+/**
+ * Class Index.
+ */
+class Index extends Action
 {
+    /**
+     * @var Data
+     */
+    protected Data $helper;
 
     /**
-     * @var PageFactory
+     * @var JsonFactory
      */
-    protected $resultPageFactory;
+    protected JsonFactory $resultJsonFactory;
 
     /**
      * Result constructor.
-     * @param Context $context
-     * @param PageFactory $pageFactory
+     *
+     * @param Context     $context
+     * @param Data        $helper
+     * @param JsonFactory $resultJsonFactory
      */
     public function __construct(
         Context $context,
-        PageFactory $pageFactory,
-        \Pharmao\Delivery\Model\Delivery $deliveryModel,
-        \Pharmao\Delivery\Helper\Data $helper,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+        Data $helper,
+        JsonFactory $resultJsonFactory
     ) {
-        $this->resultPageFactory = $pageFactory;
-        $this->model = $deliveryModel;
         $this->helper = $helper;
         $this->resultJsonFactory = $resultJsonFactory;
         parent::__construct($context);
     }
 
     /**
-     * The controller action
+     * The controller action.
      *
-     * @return \Magento\Framework\View\Result\Page
+     * @return Json
      */
-    public function execute()
+    public function execute(): Json
     {
+        $result = $this->resultJsonFactory->create();
+
         $pharmaoDeliveryJobInstance = $this->helper->getPharmaoDeliveryJobInstance();
-        if ($pharmaoDeliveryJobInstance->getAccessToken() != null) {
-            /** @var \Magento\Framework\Controller\Result\Json $result */
-            $result = $this->resultJsonFactory->create();
-            return $result->setData(['data' => 'Success']);
+        if ($pharmaoDeliveryJobInstance instanceof JobService && null != $pharmaoDeliveryJobInstance->getAccessToken()) {
+            return $result->setData(['success' => true]);
         }
+
+        return $result->setData(['success' => false]);
     }
 }

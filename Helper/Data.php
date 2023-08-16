@@ -1,87 +1,148 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Helper;
 
-use Pharmao\Delivery\Helper\Service\JobService;
+use Magento\Directory\Model\CountryFactory;
+use Magento\Directory\Model\ResourceModel\Country as CountryResource;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Pharmao\Delivery\Helper\Service\JobService;
+use Pharmao\Delivery\Helper\Service\JobServiceFactory;
+use Pharmao\Delivery\Model\Configuration;
 
+/**
+ * Class Data.
+ */
 class Data extends AbstractHelper
 {
-    protected $storeScope;
-
     /**
-     * Environments
+     * Environments.
+     *
      * @var array
      */
-    protected $environments = [
+    protected array $environments = [
         'sandbox' => 'https://delivery-sandbox.pharmao.fr/',
         'production' => 'https://pharmao-delivery-live.pharmao.fr/',
     ];
-    
+
     /**
-     * @param \Pharmao\Delivery\Model\Delivery          $deliveryModel
+     * @var Configuration
+     */
+    protected Configuration $configuration;
+
+    /**
+     * @var CountryFactory
+     */
+    protected CountryFactory $countryFactory;
+
+    /**
+     * @var CountryResource
+     */
+    protected CountryResource $countryResource;
+
+    /**
+     * @var JobServiceFactory
+     */
+    protected JobServiceFactory $jobServiceFactory;
+
+    /**
+     * @param Context           $context
+     * @param Configuration     $configuration
+     * @param CountryFactory    $countryFactory
+     * @param CountryResource   $countryResource
+     * @param JobServiceFactory $jobServiceFactory
      */
     public function __construct(
-        \Pharmao\Delivery\Model\Delivery $deliveryModel,
-        \Magento\Directory\Model\CountryFactory $countryFactory
+        Context $context,
+        Configuration $configuration,
+        CountryFactory $countryFactory,
+        CountryResource $countryResource,
+        JobServiceFactory $jobServiceFactory
     ) {
-        $this->model = $deliveryModel;
-        $this->_countryFactory = $countryFactory;
+        parent::__construct($context);
+        $this->configuration = $configuration;
+        $this->countryFactory = $countryFactory;
+        $this->countryResource = $countryResource;
+        $this->jobServiceFactory = $jobServiceFactory;
     }
-   
-    public function generateRandomNumber()
+
+    /**
+     * @return string
+     */
+    public function generateRandomNumber(): string
     {
-        return md5(microtime(true).mt_Rand());
+        return md5(microtime(true).mt_rand());
     }
-   
-    public function getFullAddress($shippingAddress)
+
+    /**
+     * @param $shippingAddress
+     *
+     * @return array
+     */
+    public function getFullAddress($shippingAddress): array
     {
         $street_data = $shippingAddress->getStreet();
-        $street_0 = isset($street_data[0]) ? $street_data[0] : '';
-        $street_1 = isset($street_data[1]) ? $street_data[1] : '';
+        $street_0 = $street_data[0] ?? '';
+        $street_1 = $street_data[1] ?? '';
         $post_code = $shippingAddress->getPostCode();
         $city = $shippingAddress->getCity();
-        $full_address = $street_0 . " " . $street_1 . ", " . $post_code . " " . $city . ", " . $this->getCountryName();
+        $full_address = $street_0.' '.$street_1.', '.$post_code.' '.$city.', '.$this->getCountryName();
+
         return ['full_address' => $full_address, 'street_1' => $street_1];
     }
-   
-    public function getCountryName()
+
+    /**
+     * @return string
+     */
+    public function getCountryName(): string
     {
-        $country = $this->_countryFactory->create()->loadByCode($this->model->getConfigData('pharmaocountry'));
+        $country = $this->countryFactory->create();
+        $this->countryResource->loadByCode($country, $this->configuration->getConfigData('pharmaocountry'));
+
         return $country->getName();
     }
 
     /**
-     * Get PharmaoDeliveryJobInstance
-     * @return  [description]
+     * Get PharmaoDeliveryJobInstance.
+     *
+     * @return false|JobService [description]
      */
-    public function getPharmaoDeliveryJobInstance()
+    public function getPharmaoDeliveryJobInstance(): false|JobService
     {
-        if (!$this->model->getConfigData('api_key', 'general')) {
+        if (!$this->configuration->getConfigData('api_key')) {
             return false;
         }
-        
-        $pharmaoDelivery = new JobService([
-            'country' => $this->_countryFactory,
-            'config' => $this->model,
-            'secret' => $this->model->getConfigData('api_key', 'general'),
-            'username' => $this->model->getConfigData('username', 'general'),
-            'password' => $this->model->getConfigData('password', 'general'),
-            'environment' => $this->model->getConfigData('environment', 'general'),
-            'base_url' => ($this->model->getConfigData('environment', 'general'))
-                ? $this->environments['production'] : $this->environments['sandbox'],
+
+        /** @var JobService $pharmaoDelivery */
+        $pharmaoDelivery = $this->jobServiceFactory->create([
+            'params' => [
+                'country_factory' => $this->countryFactory,
+                'country_resource' => $this->countryResource,
+                'config' => $this->configuration,
+                'secret' => $this->configuration->getConfigData('api_key'),
+                'username' => $this->configuration->getConfigData('username'),
+                'password' => $this->configuration->getConfigData('password'),
+                'environment' => $this->configuration->getConfigData('environment'),
+                'base_url' => ($this->configuration->getConfigData('environment'))
+                    ? $this->environments['production'] : $this->environments['sandbox'],
+            ],
         ]);
+
         return $pharmaoDelivery;
     }
-    
+
     /**
-     * Get PharmaoDeliveryJobInstance
-     * @return  [description]
+     * Get PharmaoDeliveryJobInstance.
+     *
+     * @return string [description]
      */
-    public function getJobMapUrl()
+    public function getJobMapUrl(): string
     {
-        $base_url = ($this->model->getConfigData('environment', 'general'))
-                ? $this->environments['production'] : $this->environments['sandbox'];
-        return $base_url . 'job-map/';
+        $base_url = ($this->configuration->getConfigData('environment'))
+            ? $this->environments['production'] : $this->environments['sandbox'];
+
+        return $base_url.'job-map/';
     }
 }

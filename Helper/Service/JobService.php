@@ -1,84 +1,102 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Helper\Service;
 
-use Pharmao\Delivery\Helper\Service\AbstractService;
+use Exception;
 
+/**
+ * Class JobService.
+ */
 class JobService extends AbstractService
 {
-    
     /**
-     * Validate Job
-     * @param  array $data
+     * Validate Job.
+     *
+     * @param array $data
+     *
      * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function validateJob($data)
+    public function validateJob(array $data): array
     {
         if (!$this->checkDomain()) {
-            return false;
+            return [];
         }
 
-        $body = $this->post('/job/validate', $data);
-
-        return $body;
+        return $this->post('/job/validate', $data);
     }
 
     /**
-     * Create Job
-     * @param  array $data
-     * @return mixed
+     * Create Job.
+     *
+     * @param array $data
+     *
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function createJob($data)
+    public function createJob(array $data): array
     {
         if (!$this->checkDomain()) {
-            return false;
+            return [];
         }
 
         $params = $this->buildJobData($data);
 
-        $body = $this->post('/jobs', $params);
-
-        return $body;
+        return $this->post('/jobs', $params);
     }
 
     /**
-     * Validate and Create Job
-     * @param  array $data
-     * @return mixed
+     * Validate and Create Job.
+     *
+     * @param array $data
+     *
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function validateAndCreateJob($data)
+    public function validateAndCreateJob(array $data): array
     {
         $params = $this->buildJobData($data);
-       
+
         $validationResponse = $this->validateJob($params);
 
         if ($validationResponse
-            && isset($validationResponse->code)
-            && 200 == $validationResponse->code
-            && $validationResponse->data->is_valid
+            && isset($validationResponse['code'])
+            && 200 == $validationResponse['code']
+            && isset($validationResponse['data']['is_valid'])
+            && $validationResponse['data']['is_valid']
         ) {
             return $this->post('/jobs', $params);
         }
 
-
-        return false;
+        return [];
     }
 
     /**
-     * Get Price
-     * @param  array $data
-     * @return mixed
+     * Get Price.
+     *
+     * @param array $data
+     *
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function getPrice($data)
+    public function getPrice(array $data): array
     {
         if (!$this->checkDomain()) {
-            return false;
+            return [];
         }
 
         $params = $this->buildJobData($data);
 
-        $body = $this->post('/job/price', $params);
-
-        return $body;
+        return $this->post('/job/price', $params);
     }
 }

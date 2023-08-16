@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="pharmao_cache_addresses" resource="default" engine="innodb" comment="Pharmao Cache Addresses">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Customer ID"/>
+        <column xsi:type="varchar" name="email" nullable="false" length="255" default=""
+                comment="Email"/>
+        <column xsi:type="int" name="address_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Address ID"/>
+        <column xsi:type="varchar" name="street1" nullable="false" length="255" default=""
+                comment="Street 1"/>
+        <column xsi:type="varchar" name="street2" nullable="false" length="255" default=""
+                comment="Street 2"/>
+        <column xsi:type="varchar" name="street3" nullable="false" length="255" default=""
+                comment="Street 3"/>
+        <column xsi:type="varchar" name="city" nullable="false" length="255" default=""
+                comment="City"/>
+        <column xsi:type="varchar" name="postcode" nullable="false" length="255" default=""
+                comment="Postcode"/>
+        <column xsi:type="varchar" name="country" nullable="false" length="255" default=""
+                comment="Country"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="pharmao_job" resource="default" engine="innodb" comment="Pharmao Job">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="ID"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Order ID"/>
+        <column xsi:type="int" name="job_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Job ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store ID"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="255" default=""
+                comment="Status"/>
+        <column xsi:type="varchar" name="address" nullable="false" length="255" default=""
+                comment="Status"/>
+        <column xsi:type="timestamp" name="added" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Added"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+
+    <table name="sales_order">
+        <column xsi:type="int" name="job_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Job ID"/>
+    </table>
+    <table name="sales_invoice">
+        <column xsi:type="int" name="job_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Job ID"/>
+    </table>
+</schema>

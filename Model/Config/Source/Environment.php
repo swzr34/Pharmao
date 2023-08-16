@@ -1,32 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model\Config\Source;
 
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
- * Class Environment
- * @package Pharmao\Delivery\Model\Config\Source
+ * Class Environment.
  */
-class Environment implements ArrayInterface
+class Environment implements OptionSourceInterface
 {
-    const TYPE_SANDBOX = 0;
-    const TYPE_LIVE = 1;
+    public const TYPE_SANDBOX = 0;
+    public const TYPE_LIVE = 1;
 
-    public function toOptionArray()
+    /**
+     * @return array[]
+     */
+    public function toOptionArray(): array
     {
         return [
             ['value' => self::TYPE_SANDBOX, 'label' => __('Sandbox')],
-            ['value' => self::TYPE_LIVE, 'label' => __('Live')]
+            ['value' => self::TYPE_LIVE, 'label' => __('Live')],
         ];
     }
 
-    public function toArray()
+    /**
+     * @return array
+     */
+    public function toArray(): array
     {
         $result = [];
         foreach ($this->toOptionArray() as $option) {
             $result[$option['value']] = $option['label'];
         }
+
         return $result;
     }
 }

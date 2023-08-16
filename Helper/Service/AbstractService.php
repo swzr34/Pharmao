@@ -1,98 +1,125 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Helper\Service;
 
-use Pharmao\Delivery\Model\Delivery;
-use Magento\Framework\HTTP\Client\Curl;
 use Magento\Directory\Model\CountryFactory;
+use Magento\Directory\Model\ResourceModel\Country as CountryResource;
+use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\Client\CurlFactory;
+use Pharmao\Delivery\Model\Configuration;
 
+/**
+ * Class AbstractService.
+ */
 abstract class AbstractService
 {
     /**
-     * Curl Client
-     * @var \Magento\Framework\HTTP\Client\Curl
+     * Curl Client.
+     *
+     * @var Curl
      */
-    protected $_curlClient;
+    protected Curl $curlClient;
 
     /**
-     * Config Model
-     * @var null|\Pharmao\Delivery\Model\Delivery
+     * Config Model.
+     *
+     * @var Configuration
      */
-    protected $config = null;
+    protected Configuration $config;
 
     /**
-     * Access Token
+     * Access Token.
+     *
      * @var string
      */
-    protected $accessToken = '';
+    protected string $accessToken = '';
 
     /**
-     * Version
+     * Version.
+     *
      * @var string
      */
-    protected $version = 'v1';
+    protected string $version = 'v1';
 
     /**
-     * $baseUrl
+     * $baseUrl.
+     *
      * @var string
      */
-    protected $baseUrl = '';
-
+    protected string $baseUrl = '';
 
     /**
-     * Curl Cleint
-     * @param array $params
+     * @var CountryFactory
      */
-    public function __construct($params)
-    {
+    protected CountryFactory $countryFactory;
+
+    /**
+     * @var CountryResource
+     */
+    protected CountryResource $countryResource;
+
+    /**
+     * @param CurlFactory $curlFactory
+     * @param array       $params
+     */
+    public function __construct(
+        CurlFactory $curlFactory,
+        array $params
+    ) {
         $secret = $params['secret'];
         $username = $params['username'];
         $password = $params['password'];
-        $this->baseUrl = $params['base_url'] . $this->version;
+        $this->baseUrl = $params['base_url'].$this->version;
 
-        $this->_curlClient = new Curl();
+        $this->curlClient = $curlFactory->create();
         $this->config = $params['config'];
-        $this->country = $params['country'];
-        
+        $this->countryFactory = $params['country_factory'];
+        $this->countryResource = $params['country_resource'];
+
         if (empty($this->accessToken) && $this->checkDomain()) {
             $data = [
                 'secret' => $secret,
                 'username' => $username,
                 'password' => $password,
             ];
-            
+
             $tokenResponse = $this->post('/create-token', $data);
-            
-            if (isset($tokenResponse->access_token)) {
-                $this->accessToken = $tokenResponse->access_token;
+            if (isset($tokenResponse['access_token'])) {
+                $this->accessToken = $tokenResponse['access_token'];
             }
         }
     }
 
     /**
-     * Get Access Token
+     * Get Access Token.
+     *
      * @return string
      */
-    public function getAccessToken()
+    public function getAccessToken(): string
     {
         return $this->accessToken;
     }
 
     /**
-     * Build Url
-     * @param  string $endpoint
+     * Build Url.
+     *
+     * @param string $endpoint
+     *
      * @return string
      */
-    public function buildUrl($endpoint)
+    public function buildUrl(string $endpoint): string
     {
-        return $this->baseUrl . $endpoint;
+        return $this->baseUrl.$endpoint;
     }
 
     /**
-     * Gets Default Headers
+     * Gets Default Headers.
+     *
      * @return array
      */
-    public function getDefaultHeaders()
+    public function getDefaultHeaders(): array
     {
         return [
             'Content-Type' => 'application/json',
@@ -101,10 +128,13 @@ abstract class AbstractService
     }
 
     /**
-     * Set Headers
-     * @param self
+     * Set Headers.
+     *
+     * @param array $data
+     *
+     * @return AbstractService
      */
-    public function setHeaders($data = [])
+    public function setHeaders(array $data = []): static
     {
         $headers = $this->getDefaultHeaders();
 
@@ -112,100 +142,117 @@ abstract class AbstractService
             $headers[$key] = $val;
         }
 
-        $this->_curlClient->setHeaders($headers);
+        $this->curlClient->setHeaders($headers);
 
         return $this;
     }
 
     /**
-     * Sets Options
+     * Sets Options.
+     *
      * @param array $options
+     *
+     * @return AbstractService
      */
-    public function setOptions($options = [])
+    public function setOptions(array $options = []): static
     {
         foreach ($options as $key => $val) {
-            $this->_curlClient->setOption($key, $val);
+            $this->curlClient->setOption($key, $val);
         }
 
         return $this;
     }
 
     /**
-     * Gets Response Body
-     * @return mixed
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function getResponseBody()
+    public function getResponseBody(): array
     {
-        $response = $this->_curlClient->getBody();
+        $response = $this->curlClient->getBody();
 
-        return json_decode($response);
+        return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
-     * Perform Post
-     * @param  string $endpont
-     * @param  array $data
-     * @return mixed
+     * Perform post.
+     *
+     * @param string $endpoint
+     * @param array  $data
+     *
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function post($endpoint, $data)
+    public function post(string $endpoint, array $data): array
     {
         $this->setHeaders([]);
-        $this->_curlClient->post($this->buildUrl($endpoint), json_encode($data));
+        $this->curlClient->post($this->buildUrl($endpoint), json_encode($data));
 
         return $this->getResponseBody();
     }
 
     /**
-     * Perform Get
-     * @param  string $endpont
-     * @return mixed
+     * Perform get.
+     *
+     * @param string $endpoint
+     *
+     * @return array
+     *
+     * @throws \JsonException
+     * @throws \Zend_Log_Exception
      */
-    public function get($endpont)
+    public function get(string $endpoint): array
     {
         $this->setHeaders([]);
 
-        $this->_curlClient->get($this->buildUrl($endpoint));
+        $this->curlClient->get($this->buildUrl($endpoint));
 
         return $this->getResponseBody();
     }
 
     /**
-     * Get Country Name
+     * Get Country Name.
+     *
      * @return string
      */
-    public function getCountryName()
+    public function getCountryName(): string
     {
-        //$countryFactory = new CountryFactory();
-
-        $country = $this->country->create()->loadByCode($this->config->getConfigData('pharmaocountry'));
+        $country = $this->countryFactory->create();
+        $this->countryResource->loadByCode($country, $this->config->getConfigData('pharmaocountry'));
 
         return $country->getName();
     }
 
     /**
-     * Build Job Data
-     * @param  array $data
+     * Build Job Data.
+     *
+     * @param array $data
+     *
      * @return array
      */
-    public function buildJobData($data)
+    public function buildJobData(array $data): array
     {
         $job = [
             'job' => [
                 'client_type' => 'magento',
                 'is_external' => 1,
-                'external_order_amount' => isset($data['order_amount']) ? $data['order_amount'] : '',
-                'assignment_code' => isset($data['assignment_code']) ? $data['assignment_code'] : '',
-                'external_order_reference' => isset($data['order_id']) ? $data['order_id'] : '',
+                'external_order_amount' => $data['order_amount'] ?? '',
+                'assignment_code' => $data['assignment_code'] ?? '',
+                'external_order_reference' => $data['order_id'] ?? '',
                 'transport_type' => 'Bike',
                 'package_type' => 'small',
                 'package_description' => '',
-                'is_within_one_hour' => isset($data['is_within_one_hour']) ? $data['is_within_one_hour'] : '',
+                'is_within_one_hour' => $data['is_within_one_hour'] ?? '',
                 'pickups' => [
                     [
                         'comment' => sprintf(
                             'Rentrez dans la pharmacie, allez au comptoir et demander la commande Pharmao Nom: %s %s',
-                            isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
-                            isset($data['customer_lastname']) ? $data['customer_lastname'] : ''
+                            $data['customer_firstname'] ?? '',
+                            $data['customer_lastname'] ?? ''
                         ),
                         'address' => sprintf(
                             '%s, %s %s, %s',
@@ -218,19 +265,19 @@ abstract class AbstractService
                             'firstname' => $this->config->getConfigData('firstname', 'global_settings'),
                             'phone' => $this->config->getConfigData('phone', 'global_settings'),
                             'email' => $this->config->getConfigData('username', 'global_settings'),
-                            "company" => $this->config->getConfigData('company_name', 'global_settings'),
+                            'company' => $this->config->getConfigData('company_name', 'global_settings'),
                         ],
                     ],
                 ],
                 'dropoffs' => [
                     [
-                        'comment' => isset($data['customer_comment']) ? $data['customer_comment'] : '',
+                        'comment' => $data['customer_comment'] ?? '',
                         'address' => $data['customer_address'],
-                        'contact' =>  [
-                            'firstname' => isset($data['customer_firstname']) ? $data['customer_firstname'] : '',
-                            'lastname' => isset($data['customer_lastname']) ? $data['customer_lastname'] : '',
-                            'phone' => isset($data['customer_phone']) ? $data['customer_phone'] : '',
-                            'email' => isset($data['customer_email']) ? $data['customer_email'] : '',
+                        'contact' => [
+                            'firstname' => $data['customer_firstname'] ?? '',
+                            'lastname' => $data['customer_lastname'] ?? '',
+                            'phone' => $data['customer_phone'] ?? '',
+                            'email' => $data['customer_email'] ?? '',
                         ],
                     ],
                 ],
@@ -241,10 +288,11 @@ abstract class AbstractService
     }
 
     /**
-     * Check Domain
-     * @return boolean
+     * Check Domain.
+     *
+     * @return bool
      */
-    public function checkDomain()
+    public function checkDomain(): bool
     {
         $baseUrl = str_replace('/v1', '', $this->baseUrl);
         $result = false;
@@ -254,24 +302,24 @@ abstract class AbstractService
         $handle = curl_init($url);
 
         /* Set curl parameter */
-        curl_setopt_array($handle, array(
-            CURLOPT_FOLLOWLOCATION => TRUE,     // we need the last redirected url
-            CURLOPT_NOBODY => TRUE,             // we don't need body
-            CURLOPT_HEADER => FALSE,            // we don't need headers
-            CURLOPT_RETURNTRANSFER => FALSE,    // we don't need return transfer
-            CURLOPT_SSL_VERIFYHOST => FALSE,    // we don't need verify host
-            CURLOPT_SSL_VERIFYPEER => FALSE     // we don't need verify peer
-        ));
+        curl_setopt_array($handle, [
+            CURLOPT_FOLLOWLOCATION => true,     // we need the last redirected url
+            CURLOPT_NOBODY => true,             // we don't need body
+            CURLOPT_HEADER => false,            // we don't need headers
+            CURLOPT_RETURNTRANSFER => false,    // we don't need return transfer
+            CURLOPT_SSL_VERIFYHOST => false,    // we don't need verify host
+            CURLOPT_SSL_VERIFYPEER => false,     // we don't need verify peer
+        ]);
 
         /* Get the HTML or whatever is linked in $url. */
         $response = curl_exec($handle);
 
-        //$httpCode = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);  // Try to get the last url
+        // $httpCode = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);  // Try to get the last url
         $httpCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);      // Get http status from last url
 
         /* Close curl connection */
         curl_close($handle);
 
-        return (200 === $httpCode);
+        return 200 === $httpCode;
     }
 }

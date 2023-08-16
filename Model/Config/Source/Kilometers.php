@@ -1,9 +1,20 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model\Config\Source;
 
-class Kilometers implements \Magento\Framework\Data\OptionSourceInterface
+use Magento\Framework\Data\OptionSourceInterface;
+
+/**
+ * Class Kilometers.
+ */
+class Kilometers implements OptionSourceInterface
 {
-    public function toOptionArray()
+    /**
+     * @return array[]
+     */
+    public function toOptionArray(): array
     {
         return [
         ['value' => '', 'label' => __('Select Distance Range')],
@@ -16,7 +27,7 @@ class Kilometers implements \Magento\Framework\Data\OptionSourceInterface
         ['value' => '7', 'label' => __('7')],
         ['value' => '8', 'label' => __('8')],
         ['value' => '9', 'label' => __('9')],
-        ['value' => '10', 'label' => __('10')]
+        ['value' => '10', 'label' => __('10')],
         ];
     }
 }

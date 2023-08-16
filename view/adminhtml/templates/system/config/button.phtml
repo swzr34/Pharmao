@@ -17,18 +17,16 @@ require([
           data: {secret:delivery_configuration_general_api_key, username:delivery_configuration_general_username, password:delivery_configuration_general_password},
           success: function( data ) {
             jQuery('#save').addClass('submit_config');
-            var res = data;
-
-            if (res.data !== '') {
-                jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:green">API configure successfully.</span>'); 
+            if (data.success) {
+                jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:green">API configure successfully.</span>');
             } else {
-                jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:red">Check credentials.</span>'); 
+                jQuery('#delivery_configuration_general_api_key').closest('td').next().html('<span style="color:red">Check credentials.</span>');
             }
             jQuery('body').trigger('processStop');
           },
           error: function (request, status, error) {
             alert('error');
-                jQuery('#delivery_configuration_general_api_key_sandbox').closest('td').next().html('<span style="color:red">Check credentials.</span>'); 
+                jQuery('#delivery_configuration_general_api_key_sandbox').closest('td').next().html('<span style="color:red">Check credentials.</span>');
         }
         });
     }
@@ -48,7 +46,7 @@ require([
                       var data = JSON.parse(data.data);
                       jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').find('option').remove();
                       jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').append(data);
-                      jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','contents'); 
+                      jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','contents');
                       jQuery('body').trigger('processStop');
                   },
                   error: function (request, status, error) {
@@ -69,7 +67,7 @@ require([
     if(jQuery('#delivery_configuration_general_pharmao_delivery_active_status').val() != '' && jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').val() != null) {
         jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','contents');
     } else {
-        jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').append('<option>Select order status State</option>'); 
+        jQuery('#delivery_configuration_general_pharmao_delivery_active_stat').append('<option>Select order status State</option>');
         jQuery('#row_delivery_configuration_general_pharmao_delivery_active_stat').css('display','none');
     }
     jQuery('#row_delivery_configuration_general_access_token').css('display','none');
