@@ -4,17 +4,17 @@
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="delivery_job_listing_data_source" xsi:type="string">Pharmao\Delivery\Model\ResourceModel\Job\Collection</item>
+                <item name="delivery_job_listing_data_source" xsi:type="string">Pharmao\Delivery\Model\ResourceModel\Job\Grid\Collection</item>
             </argument>
         </arguments>
     </type>
-    <virtualType name="Pharmao\Delivery\Model\ResourceModel\Job\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+    <virtualType name="Pharmao\Delivery\Model\ResourceModel\Job\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">pharmao_job</argument>
             <argument name="resourceModel" xsi:type="string">Pharmao\Delivery\Model\ResourceModel\Job</argument>
         </arguments>
     </virtualType>
     <type name="Magento\Sales\Api\OrderManagementInterface">
-        <plugin name="OrderChangePlaceOrders" type="Pharmao\Delivery\Observer\OrderChangePlaceOrder" sortOrder="99" />
+        <plugin name="OrderChangePlaceOrder" type="Pharmao\Delivery\Plugin\OrderChangePlaceOrder" sortOrder="99" />
     </type>
 </config>

@@ -1,11 +1,22 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model\Carrier;
 
+use Magento\Checkout\Model\Cart;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
+use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
+use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Shipping\Model\Rate\Result;
+use Magento\Shipping\Model\Rate\ResultFactory;
+use Pharmao\Delivery\Helper\Data;
+use Pharmao\Delivery\Model\Configuration;
+use Psr\Log\LoggerInterface;
 
-class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
-    \Magento\Shipping\Model\Carrier\CarrierInterface
+class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements \Magento\Shipping\Model\Carrier\CarrierInterface
 {
     /**
      * @var string
@@ -13,42 +24,70 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
     protected $_code = 'dropoffs';
 
     /**
-     * @var \Magento\Shipping\Model\Rate\ResultFactory
+     * @var ResultFactory
      */
-    protected $_rateResultFactory;
+    protected ResultFactory $_rateResultFactory;
 
     /**
-     * @var \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory
+     * @var MethodFactory
      */
-    protected $_rateMethodFactory;
+    protected MethodFactory $_rateMethodFactory;
 
-    protected $scopeConfig;
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected ScopeConfigInterface $scopeConfig;
 
-    protected $_cart;
+    /**
+     * @var Cart
+     */
+    protected Cart $_cart;
 
-    protected $helper;
+    /**
+     * @var Data
+     */
+    protected Data $helper;
+
+    /**
+     * @var SerializerInterface
+     */
+    protected SerializerInterface $serializer;
+
+    /**
+     * @var ResultFactory
+     */
+    protected ResultFactory $_rateFactory;
+
+    /**
+     * @var Configuration
+     */
+    protected Configuration $configuration;
 
     /**
      * Shipping constructor.
      *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface          $scopeConfig
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory  $rateErrorFactory
-     * @param \Psr\Log\LoggerInterface                                    $logger
-     * @param \Magento\Shipping\Model\Rate\ResultFactory                  $rateResultFactory
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
-     * @param array                                                       $data
+     * @param SerializerInterface  $serializer
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ResultFactory        $rateFactory
+     * @param Cart                 $cartModel
+     * @param ErrorFactory         $rateErrorFactory
+     * @param LoggerInterface      $logger
+     * @param ResultFactory        $rateResultFactory
+     * @param MethodFactory        $rateMethodFactory
+     * @param Configuration        $configuration
+     * @param Data                 $helper
      */
     public function __construct(
-        \Magento\Framework\Serialize\SerializerInterface $serializer,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Shipping\Model\Rate\ResultFactory $rateFactory,
-        \Magento\Checkout\Model\Cart $cartModel,
-        \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
-        \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
-        \Pharmao\Delivery\Model\Delivery $deliveryModel,
-        \Pharmao\Delivery\Helper\Data $helper
+        SerializerInterface $serializer,
+        ScopeConfigInterface $scopeConfig,
+        ResultFactory $rateFactory,
+        Cart $cartModel,
+        ErrorFactory $rateErrorFactory,
+        LoggerInterface $logger,
+        ResultFactory $rateResultFactory,
+        MethodFactory $rateMethodFactory,
+        Configuration $configuration,
+        Data $helper
     ) {
         $this->serializer = $serializer;
         $this->scopeConfig = $scopeConfig;
@@ -56,16 +95,17 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $this->_rateResultFactory = $rateResultFactory;
         $this->_cart = $cartModel;
         $this->_rateMethodFactory = $rateMethodFactory;
-        $this->model = $deliveryModel;
+        $this->configuration = $configuration;
         $this->helper = $helper;
         parent::__construct($scopeConfig, $rateErrorFactory, $logger);
     }
 
     /**
-     * get allowed methods
+     * get allowed methods.
+     *
      * @return array
      */
-    public function getAllowedMethods()
+    public function getAllowedMethods(): array
     {
         return [$this->_code => $this->getConfigData('name')];
     }
@@ -73,27 +113,26 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
     /**
      * @return float
      */
-    private function getShippingPrice()
+    private function getShippingPrice(): float
     {
         $configPrice = $this->getConfigData('price');
 
-        $shippingPrice = $this->getFinalPriceWithHandlingFee($configPrice);
-
-        return $shippingPrice;
+        return $this->getFinalPriceWithHandlingFee($configPrice);
     }
 
     /**
      * @param RateRequest $request
+     *
      * @return bool|Result
      */
-    public function collectRates(RateRequest $request)
+    public function collectRates(RateRequest $request): bool|Result
     {
         $assignment_code = $this->helper->generateRandomNumber();
-        $configDeliveryType = $this->model->getConfigData('delivery_type');
+        $configDeliveryType = $this->configuration->getConfigData('delivery_type');
 
-        if (!$this->model->isEnabled()
+        if (!$this->configuration->isEnabled()
             || !$this->getConfigFlag('active')
-            || $configDeliveryType == 0
+            || 0 == $configDeliveryType
         ) {
             return false;
         }
@@ -101,7 +140,7 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
         $city = $request->getDestCity();
         $postCode = $request->getDestPostcode();
         $address = $request->getDestStreet();
-        $fullAddress = $address . ", " . $postCode . " " . $city . ", " . $this->helper->getCountryName();
+        $fullAddress = $address.', '.$postCode.' '.$city.', '.$this->helper->getCountryName();
 
         $items = $this->_cart->getQuote()->getAllItems();
         $sub_total = $this->_cart->getQuote()->getSubtotal();
@@ -109,11 +148,11 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
 
         $weight = 0;
         foreach ($items as $item) {
-            $weight += ($item->getWeight() * $item->getQty()) ;
+            $weight += ($item->getWeight() * $item->getQty());
         }
 
         $weight_limit = '';
-        if ($this->model->getWeightUnit() == 'kgs') {
+        if ('kgs' == $this->configuration->getWeightUnit()) {
             $weight_limit = '10';
         } else {
             $weight_limit = '22.0462';
@@ -125,20 +164,25 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
             'is_within_one_hour' => 1,
             'assignment_code' => $assignment_code,
             'order_id' => '',
-            'customer_address' => $fullAddress
+            'customer_address' => $fullAddress,
         ];
 
-        $response = '';    
+        $response = '';
         if ($pharmaoDeliveryJobInstance->getAccessToken()) {
             $response = $pharmaoDeliveryJobInstance->getPrice($params);
         }
         $result = $this->_rateResultFactory->create();
 
-        /*store shipping in session*/
-        if ($response && isset($response->code) && 200 == $response->code) {
-            $limitationOfKms = $this->model->getConfigData('distance_range');
+        /* store shipping in session */
+        if ($response && isset($response['code']) && 200 == $response['code']) {
+            $limitationOfKms = $this->configuration->getConfigData('distance_range');
 
-            if (isset($response->data->distance) && $response->data->distance < $limitationOfKms && $weight < $weight_limit) {
+            if (
+                isset($response['data']['distance'])
+                && $response['data']['distance'] < $limitationOfKms
+                && $weight < $weight_limit
+                && isset($response['data']['amount_within_one_hour'])
+            ) {
                 $method = $this->_rateMethodFactory->create();
 
                 $method->setCarrier($this->_code);
@@ -149,13 +193,15 @@ class DropoffsCarrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier im
 
                 $amount = $this->getShippingPrice();
 
-                $method->setPrice($response->data->amount_within_one_hour);
-                $method->setCost($response->data->amount_within_one_hour);
+                $method->setPrice($response['data']['amount_within_one_hour']);
+                $method->setCost($response['data']['amount_within_one_hour']);
 
                 $result->append($method);
 
                 return $result;
             }
         }
+
+        return false;
     }
 }

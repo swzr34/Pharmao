@@ -2,7 +2,7 @@
   "name": "pharmao/delivery",
   "description": "Magento 2 Delivery Process",
   "type": "magento2-module",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "license": [
         "OSL-3.0",
         "AFL-3.0"
@@ -17,7 +17,7 @@
   "repositories": [
         {
             "type": "composer",
-            "url": ""  
+            "url": ""
         }
     ],
   "require": {

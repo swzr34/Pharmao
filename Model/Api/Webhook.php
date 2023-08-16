@@ -1,47 +1,103 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model\Api;
 
-use Psr\Log\LoggerInterface;
-use Magento\Sales\Model\Order;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Sales\Model\Order;
+use Pharmao\Delivery\Api\WebhookInterface;
+use Pharmao\Delivery\Helper\Data;
+use Pharmao\Delivery\Model\JobFactory;
+use Pharmao\Delivery\Model\ResourceModel\Job as JobResource;
+use Pharmao\Delivery\Model\ResourceModel\Job\CollectionFactory as JobCollectionFactory;
+use Psr\Log\LoggerInterface;
 
-class Webhook
+/**
+ * Class Webhook.
+ */
+class Webhook implements WebhookInterface
 {
-    protected $logger;
+    /**
+     * @var LoggerInterface
+     */
+    protected LoggerInterface $logger;
 
-    protected $_jobFactory;
+    /**
+     * @var JobFactory
+     */
+    protected JobFactory $jobFactory;
 
+    /**
+     * @var JobResource
+     */
+    protected JobResource $jobResource;
+
+    /**
+     * @var JobCollectionFactory
+     */
+    protected JobCollectionFactory $jobCollectionFactory;
+
+    /**
+     * @var Order
+     */
+    protected Order $order;
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected ScopeConfigInterface $scopeConfig;
+
+    /**
+     * @var Data
+     */
+    protected Data $helper;
+
+    /**
+     * @param LoggerInterface      $logger
+     * @param Order                $order
+     * @param ScopeConfigInterface $scopeConfig
+     * @param JobFactory           $jobFactory
+     * @param JobResource          $jobResource
+     * @param JobCollectionFactory $jobCollectionFactory
+     * @param Data                 $helper
+     */
     public function __construct(
         LoggerInterface $logger,
         Order $order,
         ScopeConfigInterface $scopeConfig,
-        \Pharmao\Delivery\Model\JobFactory $jobFactory,
-        \Pharmao\Delivery\Helper\Data $helper
+        JobFactory $jobFactory,
+        JobResource $jobResource,
+        JobCollectionFactory $jobCollectionFactory,
+        Data $helper
     ) {
-
         $this->logger = $logger;
         $this->order = $order;
         $this->scopeConfig = $scopeConfig;
-        $this->_jobFactory = $jobFactory;
+        $this->jobFactory = $jobFactory;
+        $this->jobResource = $jobResource;
+        $this->jobCollectionFactory = $jobCollectionFactory;
         $this->helper = $helper;
     }
 
     /**
-     * @inheritdoc
+     * @param mixed $data
+     *
+     * @return bool
      */
-
-    public function getPost($data)
+    public function getPost(mixed $data): bool
     {
-        $model = $this->_jobFactory->create();
-        $collection = $model->getCollection()->addFieldToFilter('job_id', trim($data['id']));
+        $collection = $this->jobCollectionFactory->create();
+        $collection->addFieldToFilter('job_id', trim((string) $data['id']));
         $jobData = $collection->getData();
         if (!empty($jobData)) {
-            $jobUpdate = $model->load($jobData[0]['id']);
+            $jobUpdate = $this->jobFactory->create();
+            $this->jobResource->load($jobUpdate, $jobData[0]['id']);
             $jobUpdate->setStatus($data['status']);
-            $jobUpdate->setAdded(date("Y-m-d H:i:s"));
-            $saveData = $jobUpdate->save();
+            $jobUpdate->setAdded(date('Y-m-d H:i:s'));
+            $this->jobResource->save($jobUpdate);
         }
+
         return true;
     }
 }

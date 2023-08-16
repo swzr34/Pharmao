@@ -1,19 +1,31 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model\Config\Source;
 
+use Magento\Framework\Data\OptionSourceInterface;
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection as OrderStatusCollection;
 
-class Status implements \Magento\Framework\Data\OptionSourceInterface
+/**
+ * Class Status.
+ */
+class Status implements OptionSourceInterface
 {
-    
-    private $orderStatusCollection;
-    
+    /**
+     * @var OrderStatusCollection
+     */
+    private OrderStatusCollection $orderStatusCollection;
+
     public function __construct(OrderStatusCollection $orderStatusCollection)
     {
-        $this->orderStatusCollection=$orderStatusCollection;
+        $this->orderStatusCollection = $orderStatusCollection;
     }
-    
-    public function toOptionArray()
+
+    /**
+     * @return array
+     */
+    public function toOptionArray(): array
     {
         return $this->orderStatusCollection->toOptionArray();
     }

@@ -1,0 +1,43 @@
+{
+    "pharmao_cache_addresses": {
+        "column": {
+            "id": true,
+            "customer_id": true,
+            "email": true,
+            "address_id": true,
+            "street1": true,
+            "street2": true,
+            "street3": true,
+            "city": true,
+            "postcode": true,
+            "country": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "pharmao_job": {
+        "column": {
+            "id": true,
+            "order_id": true,
+            "job_id": true,
+            "store_id": true,
+            "status": true,
+            "address": true,
+            "added": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "job_id": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "job_id": true
+        }
+    }
+}

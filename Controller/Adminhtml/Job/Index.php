@@ -1,27 +1,52 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Controller\Adminhtml\Job;
 
-class Index extends \Magento\Backend\App\Action
-{
-    protected $resultPageFactory = false;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 
+/**
+ * Class Index.
+ */
+class Index extends Action
+{
+    /**
+     * @var PageFactory
+     */
+    protected $resultPageFactory;
+
+    /**
+     * @param Context     $context
+     * @param PageFactory $resultPageFactory
+     */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        Context $context,
+        PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
     }
 
-    public function execute()
+    /**
+     * @return Page|ResultInterface
+     */
+    public function execute(): Page|ResultInterface
     {
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->getConfig()->getTitle()->prepend((__('Pharmao Delivery Jobs')));
+        $resultPage->getConfig()->getTitle()->prepend(__('Pharmao Delivery Jobs'));
 
         return $resultPage;
     }
 
-    protected function _isAllowed()
+    /**
+     * @return true
+     */
+    protected function _isAllowed(): true
     {
         return true;
     }

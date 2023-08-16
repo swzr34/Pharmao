@@ -1,10 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pharmao\Delivery\Model;
 
+/**
+ * Class State.
+ */
 class State extends \Magento\Framework\Model\AbstractModel
 {
-    protected function _construct()
+    /**
+     * @return void
+     */
+    protected function _construct(): void
     {
         $this->_init('Pharmao\Delivery\Model\ResourceModel\State');
     }
